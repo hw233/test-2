@@ -1,0 +1,118 @@
+import "monarch.proto";
+import "resource.proto";
+import "item.proto";
+import "battle.proto";
+import "conscript.proto";
+import "boss.proto";
+import "union.proto";
+
+package SanProto;
+
+//开始boss战斗
+message StartUnionBossBattleReq{
+  required BATTLE_TYPE type = 1;
+  required BattleInputInfo battle = 2;
+  required int32 union_id = 3;
+  required int32 boss_step = 4;
+  optional int32 world_boss_choose_index = 5;  //世界Boss战斗时，选择的boss队伍index
+  optional int32 gold = 6;
+}
+
+message StartUnionBossBattleRes{
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  optional BattleReward reward = 3;
+  optional ResourceInfo resource = 4;
+  repeated ConscriptInfo conscripts = 5;
+  optional BATTLE_RET battle_ret=6;
+}
+
+//结束boss战斗
+message FinishUnionBossBattleReq{
+  required BATTLE_TYPE type = 1;
+  required BattleOutputInfo battle = 2;
+  required int32 union_id = 3;
+  repeated ItemInfo items = 4;
+  optional MonarchInfo monarch = 5;
+}
+
+message FinishUnionBossBattleRes{
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+  repeated ConscriptInfo conscripts = 3;
+  repeated ItemInfo items = 4;
+  optional WorldBossInfo boss = 5;
+  optional BATTLE_RET battle_ret=6;
+  optional UNION_RET ret = 7;
+}
+
+//领取（刷新）公共宝箱
+message QueryUnionBossBoxReq {
+  required int32 union_id = 1;
+  required int32 box_id = 2;
+}
+message QueryUnionBossBoxRes{
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  optional BossBoxInfo box = 3;
+}
+
+//领取个人积分宝箱
+message AcceptUnionBossIndividualsReq {
+  required int32 union_id = 1;
+  required int32 target_step = 2;
+}
+message AcceptUnionBossIndividualsRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  optional ResourceInfo resource = 3; //资源奖励
+  repeated ItemInfo items = 4;        //物品奖励
+  optional int32 honor = 5;           //联盟荣誉
+}
+
+//重置攻击次数
+message RefreshUnionBossAttackReq {
+  required int32 union_id = 1;
+  required int32 gold = 2;
+}
+message RefreshUnionBossAttackRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+}
+
+//联盟boss
+message QueryUnionBossReq{
+  required int32 union_id = 1;
+}
+message QueryUnionBossRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+
+  optional UnionBossInfo union_boss = 3;
+}
+
+message UnionBossGroupBasicInfo {
+  required int32 id = 1;
+  repeated int32 bosses_id = 2;
+  optional bytes start_date = 3;
+  optional bytes end_date = 4;
+}
+
+//添加联盟boss组基础数据
+message AddUnionBossGroupBasicDataReq {
+  repeated UnionBossGroupBasicInfo boss_group = 1;
+}
+
+message AddUnionBossGroupBasicDataRes {
+  required int32 status = 1;
+}
+
+//更新联盟boss
+message UpdateUnionBossReq {
+  required int32 union_id = 1;
+}
+message UpdateUnionBossRes {
+  required int32 status = 1;
+  optional bool is_update = 2;
+  optional bool is_reset = 3;
+}

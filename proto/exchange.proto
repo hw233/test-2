@@ -1,0 +1,57 @@
+import "resource.proto";
+
+package SanProto;
+
+enum EXCHANGE_RET{
+     EXCHANGE_OK=0;
+     EXCHANGE_INVALID=1;
+     EXCHANGE_NO_RESOURCE = 2;
+     EXCHANGE_NO_NUM = 3;
+}
+
+enum EXCHANGE_TYPE{
+     FOODTOMONEY=1;
+     MONEYTOFOOD=2;
+}
+
+message ExchangeInfo {
+  required float food2money_exchange_ratio = 1;
+  required float money2food_exchange_ratio = 2;
+  optional int32 exchange_num = 3;
+  optional int32 next_fresh_ratio_time = 4;
+}
+
+//查询交易信息
+message QueryExchangeInfoReq {
+  required uint64 user_id = 1;
+}
+message QueryExchangeInfoRes {
+  required int32 status = 1;
+  optional EXCHANGE_RET ret=2;
+  optional ExchangeInfo exchange_info = 3;
+}
+
+//兑换请求
+message ExchangeReq {
+  required uint64 user_id = 1;
+  optional int32 food = 2;
+  optional int32 money = 3;
+  optional EXCHANGE_TYPE type=4;
+}
+message ExchangeRes {
+  required int32 status = 1;
+  optional EXCHANGE_RET ret=2;
+  optional ResourceInfo resource = 3;
+  optional int32 exchange_num = 4;
+}
+
+message QueryExchangeProportionReq {
+  required uint64 user_id = 1;
+}
+
+message QueryExchangeProportionRes {
+  required int32 status = 1;
+  optional float food2money_exchange_ratio = 2;
+  optional float money2food_exchange_ratio = 3;
+  optional int32 next_fresh_ratio_time = 4;
+}

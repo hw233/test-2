@@ -1,0 +1,75 @@
+import "resource.proto";
+import "item.proto";
+import "node.proto";
+import "hero.proto";
+
+package SanProto;
+
+//节点升级
+message NodeUpgradeReq {
+  required uint64 user_id = 1;
+  optional NodeInfo node = 2;
+  optional int32 gold = 3;      //使用元宝的数量(如果额外花费了元宝)
+}
+message NodeUpgradeRes {
+  required int32 status = 1;
+  optional NodeInfo node = 2;
+  optional ResourceInfo resource = 3;
+}
+
+//探访
+message StartEventVisitReq {
+  required uint64 user_id = 1;
+  required NodeInfo node = 2;
+}
+message StartEventVisitRes {
+  required int32 status = 1;
+  repeated int32 visit_id = 2;
+}
+message FinishEventVisitReq {
+  required uint64 user_id = 1;
+  required NodeInfo node = 2;
+  required int32 visit_id = 3;
+  optional HeroInfo hero = 4; //新获得的英雄
+  optional ItemInfo item = 5;
+  optional int32 gold = 6;    //使用元宝的数量(如果额外花费了元宝)
+}
+message FinishEventVisitRes {
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+  optional HeroInfo hero = 3;
+}
+
+//问答
+message StartEventQuestionReq {
+  required uint64 user_id = 1;
+  required NodeInfo node = 2;
+}
+message StartEventQuestionRes {
+  required int32 status = 1;
+  optional int32 question_id = 2;
+}
+message FinishEventQuestionReq {
+  required uint64 user_id = 1;
+  required NodeInfo node = 2;
+  required int32 question_id = 3;
+  repeated int32 answer = 4;
+  required bool correct = 5;//回答是否正确
+  optional HeroInfo hero = 6;
+  repeated ItemInfo items = 7;
+}
+message FinishEventQuestionRes {
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+}
+
+
+//放弃城池
+message AbandonNodeReq {
+  required int32 node_id = 1;
+}
+message AbandonNodeRes {
+  required int32 status = 1;
+  repeated NodeInfo nodes = 2;
+}
+

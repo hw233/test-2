@@ -1,0 +1,86 @@
+import "resource.proto";
+import "item.proto";
+import "team.proto";
+import "mail.proto";
+
+package SanProto;
+
+//演武场玩家信息
+message PlayerArenaInfo {
+  optional uint64 user_id = 1;
+  optional bytes name = 2;
+  optional int32 level = 3;
+  optional int32 icon_id = 4;
+  optional int32 title_level = 5;		//称号
+  optional int32 score = 6;	//积分
+  optional int32 win_score = 7;		//胜利积分
+  repeated TeamInfo teams = 8;		//部队
+  repeated int32 battle_tech_ids = 9;	//战斗科技
+  optional int32 buff_id = 10;	//buff 
+  optional int32 ranking_index = 11;	//排名
+}
+
+//演武场对战记录
+message ArenaBattleRecordInfo {
+  required int32 index = 1;
+  optional uint64 user_id = 2;
+  optional bytes name = 3;
+  optional int32 level = 4;
+  optional int32 icon_id = 5;
+
+  enum STATUS {
+    ATTACK_WIN = 1;//进攻胜利
+    ATTACK_LOSE = 2;//进攻失败
+    DEFEND_WIN = 3;//防御成功
+    DEFEND_LOSE = 4;//防御失败
+  }
+  optional STATUS status = 6;
+  optional int32 score_delta = 7;	//分数变化
+}
+
+//
+
+//演武场胜场奖励
+message ArenaWinNumRewardInfo {
+  optional int32 current_win_num = 1;
+  optional int32 need_win_num = 2;
+  optional int32 chest_level = 3;	//箱子等级
+  optional ResourceInfo reward_resource = 4;
+  repeated ItemInfo reward_items = 5;
+}
+
+//演武场信息
+message ArenaInfo {
+  enum STATUS {
+    INACTIVE = 1;	//未激活，end_time填下次开启时间
+    ACTIVE = 2;	//激活，end_time填关闭时间
+    LOCKED = 3;	//锁定状态，主公等级没有达到
+  }
+  required STATUS status = 1;
+  optional int32 index = 2;	//演武场index
+  optional int32 end_time = 3;	//当前状态结束时间
+  optional ArenaWinNumRewardInfo win_num_reward = 4;
+  optional PlayerArenaInfo own = 5;
+  repeated PlayerArenaInfo rivals = 6;
+  optional int32 refresh_num = 7;		//刷新对手次数
+  repeated ArenaBattleRecordInfo records = 8;	//演武场对战记录
+  repeated PlayerArenaInfo player_rankings = 9;	//演武场排名信息
+  optional uint64 choosed_user_id = 10;    //为玩家匹配确定的某一对手
+  optional int32 coin = 11;		//演武场的代币
+  optional bytes open_time_des= 12;  //演武场开启时间描述
+}
+
+//请求演武场
+message QueryArenaInfoReq {
+  required uint64 user_id = 1;
+  repeated ItemInfo items = 2; 	//领取胜场奖励
+}
+
+message QueryArenaInfoRes {
+  required int32 status = 1;
+  optional ArenaInfo arena_info = 2;
+  optional ResourceInfo resource = 3;
+  repeated MailInfo mails = 4;
+}
+
+

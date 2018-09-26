@@ -1,0 +1,128 @@
+import "monarch.proto";
+import "item.proto";
+import "resource.proto";
+import "rival.proto";
+
+package SanProto;
+
+//史实城玩家状态
+enum LEGENDCITY_RET {
+  OK = 0;
+  USER_INVALID = 1;   //自身失效，官职发生变更
+  RIVAL_INVALID = 2;  //对手失效，官职发生变更
+  USER_LOCKED = 3;    //自身被锁定，战斗中
+  RIVAL_LOCKED = 4;   //对手被锁定，战斗中
+  BATTLE_OVERTIME = 5;//战斗超时
+  TAX_CHANGED = 6;    //商品税信息发生变化
+}
+
+//史实城 buff 信息
+message LegendCityBuffInfo {
+  required int32 city_buff_id = 1;
+  optional int32 left_time = 2;
+}
+//史实城对战记录
+message LegendCityRecord {
+  enum RESULT {
+    WIN = 0;
+    LOSE = 1;
+  }
+  enum SIDE {
+    ATTACKER = 0;
+    DEFENDER = 1;
+  }
+  required RESULT result = 1;
+  required SIDE side = 2;
+  required LegendCityPositionInfo user = 3;
+  required LegendCityPositionInfo rival = 4;
+  required int32 user_battle_score = 5;
+  required int32 rival_battle_score = 6;
+  optional int32 time = 7;
+}
+//官职信息
+message LegendCityPositionInfo {
+  required int32 city_id = 1;   //官职对应史实城
+  required int32 level = 2;     //官职等级
+  required MonarchInfo user = 3;
+  repeated LegendCityBuffInfo buffs = 4;
+}
+//史实城中的玩家信息
+message LegendCityUserInfo {
+  required int32 position_level = 1;    //史实城官职
+  required int32 reputation = 2;        //史实城声望
+  required int32 attack_count_left = 3; //剩余攻击次数
+  required int32 attack_reset_num = 4;  //今天已经重置攻击的次数
+  repeated LegendCityBuffInfo buffs = 5;//史实城 buff
+}
+//史实城信息
+message LegendCityInfo {
+  required int32 city_id = 1;
+  required bytes slogan = 2;        //宣言
+  required int32 tax = 3;           //商品税
+  required bool update_slogan_free = 4;//修改宣言是否需要元宝
+  required bool update_tax_free = 5;   //修改商品税是否需要元宝
+  required int32 income_by_tax = 6; //太守依靠商品税获得收入
+  repeated LegendCityPositionInfo positions = 7; //官职榜
+  required LegendCityUserInfo user = 8;   //玩家信息
+  repeated LegendCityRecord records = 9;  //对战记录
+}
+
+//查询史实城信息
+message QueryLegendCityReq {
+  required int32 city_id = 1;
+  optional int32 rematch_position_level = 2; //重新匹配可以挑战的对手
+  optional int32 gold = 3;
+}
+message QueryLegendCityRes {
+  required int32 status = 1;
+  optional LEGENDCITY_RET ret = 2;
+  optional LegendCityInfo city = 3;
+  optional ResourceInfo resource = 4;
+}
+
+//修改史实城信息（太守修改宣言、商品税）
+message UpdateLegendCityReq {
+  required int32 city_id = 1;
+  optional bytes slogan = 2;
+  optional int32 tax = 3;
+  optional int32 gold = 4;
+}
+message UpdateLegendCityRes {
+  required int32 status = 1;
+  optional LEGENDCITY_RET ret = 2;
+  optional ResourceInfo resource = 3;
+}
+
+//重置攻击次数
+message ResetLegendCityAttackInfoReq {
+  required int32 city_id = 1;
+  required int32 gold = 2;
+}
+message ResetLegendCityAttackInfoRes {
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+}
+
+//购买史实城 buff
+message BuyLegendCityBuffReq {
+  required int32 city_id = 1;
+  required int32 city_buff_id = 2;
+  optional int32 gold = 3;
+  optional ItemInfo item = 4;
+}
+message BuyLegendCityBuffRes {
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+}
+
+//查询敌人信息
+message QueryLegendCityRivalInfoReq {
+  required LegendCityPositionInfo rival = 1;
+}
+message QueryLegendCityRivalInfoRes {
+  required int32 status = 1;
+  optional LEGENDCITY_RET ret = 2;
+  optional int32 unlock_time = 3; //解锁剩余时间
+  optional RivalInfo rival = 4;
+}
+

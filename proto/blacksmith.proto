@@ -1,0 +1,15 @@
+import "item.proto";
+
+package SanProto;
+
+message CastingReq {
+  required uint64 user_id = 1;
+  required int32 target_item_id = 2;
+  repeated ItemInfo origin_items = 3;
+  optional int32 target_item_num = 4;
+}
+
+message CastingRes {
+  required int32 status = 1;
+  optional ItemInfo target_item = 2;
+}

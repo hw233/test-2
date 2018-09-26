@@ -1,0 +1,30 @@
+import "resource.proto";
+package SanProto;
+
+message EnergyInfo {
+  optional int32 current_energy = 1;	//当前政令数
+  optional int32 passed_time = 2;	//政令自增已过时间
+  repeated int32 event_types = 3;	//事件类型列表
+  repeated int32 event_indexes = 4;	//对应的事件已触发次数列表
+  optional int32 buy_num = 5;	//已购买政令次数
+  optional int32 next_refresh_gap = 6;	//下次政令刷新时间间隔
+}
+
+message BuyEnergyReq {
+  optional int32 buy_num = 1;
+}
+
+message BuyEnergyRes {
+  required int32 status = 1;
+  optional EnergyInfo energy_info = 2;
+  optional ResourceInfo resource = 3;
+}
+
+message RefreshEnergyInfoReq {
+}
+
+message RefreshEnergyInfoRes {
+  required int32 status = 1;
+  optional EnergyInfo energy_info = 2;
+}
+

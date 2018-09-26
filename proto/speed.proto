@@ -1,0 +1,25 @@
+import "item.proto";
+import "building.proto";
+import "technology.proto";
+
+package SanProto;
+
+
+//使用加速物品（加速研究或建造）
+message UseSpeedItemReq {
+  required ItemInfo item = 1;
+  optional BuildingInfo building = 2;
+  optional TechnologyInfo tech = 3;
+}
+message UseSpeedItemRes {
+  enum SPEED_RET {
+    SPEED_SUCCESS = 0;
+    SPEED_ITEM_ERROR = 1;
+  }
+  required int32 status = 1;
+  optional SPEED_RET return_ret = 2;
+  optional BuildingInfo building = 3;
+  optional TechnologyInfo tech = 4;
+}
+
+

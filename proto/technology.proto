@@ -1,0 +1,45 @@
+import "hero.proto";
+import "building.proto";
+import "resource.proto";
+
+package SanProto;
+
+message TechnologyInfo {
+  enum TechType {
+    BATTLE_TECH = 0;
+    INTERIOR_TECH = 1;
+    SOLDIER_TECH = 2;
+  }
+  required int32 basic_id = 1;
+  required TechType type = 2;//区分科技类型
+  optional bool is_upgrading = 3;
+  optional int32 upgrade_start_time = 4;
+  optional int32 upgrade_consume_time = 5;
+  optional int32 building_basic_id = 6;   //研究建筑
+  optional int32 city_basic_id = 7;       //建筑所在的城池
+  optional int32 location_index = 8;      //建筑在城池中的位置
+  optional int32 upgrade_passed_time = 9;
+}
+
+//研究、完成、立即完成
+message UpgradeTechReq {
+  required uint64 user_id = 1;
+  required TechnologyInfo tech = 2;
+  required BuildingInfo building = 3;
+  repeated HeroInfo heroes = 4;       //参与研究的英雄
+  repeated BuildingInfo buildings = 5;//相关联的建筑物（会从其中抽调英雄参与到科技研究中）
+  optional bool use_gold = 6;         //玩家是否使用元宝立即完成
+}
+
+message UpgradeTechRes {
+  enum RET {
+    OK = 0;
+    NOT_UPGRADING = 1;
+    CANNT_FINISH = 2;
+  }
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+  optional RET ret = 3;
+  optional TechnologyInfo tech = 4;
+}
+

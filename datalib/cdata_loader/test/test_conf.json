@@ -1,0 +1,15 @@
+{
+  "path": {
+    "test":"./"
+  },
+  "files":[
+    {
+      "name":"skill.xls",
+      "dicts":[{"sheets":["skill", "skill1"], "key":["id"]}]
+    },
+    {
+      "name":"expandDungeon.xls",
+      "dicts":[{"sheets":["ExpandDungeonEnemyBasicInfo"], "key":["dungeonId", "level"]}]
+    }
+  ]
+}

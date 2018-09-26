@@ -1,0 +1,23 @@
+package SanProto;
+
+message ResourceInfo {
+  optional int32 money = 1;
+  optional int32 food = 2;
+  optional int32 gold = 3;
+  optional int32 achievement = 4; //成就值
+  optional int32 soldier = 5;
+  optional int32 soul = 6;
+}
+
+//使用元宝兑换资源
+message UseGoldReq {
+  required uint64 user_id = 1;
+  required int32 use_gold = 2;
+  optional int32 lack_money = 3;
+  optional int32 lack_food = 4;
+  optional int32 lack_soldier = 5;
+}
+message UseGoldRes {
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+}

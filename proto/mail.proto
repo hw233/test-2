@@ -1,0 +1,80 @@
+import "resource.proto";
+import "item.proto";
+import "rival.proto";
+import "node.proto";
+
+package SanProto;
+
+message MailInfo {
+  enum TYPE {
+    SYSTEM = 1;       //系统邮件
+    BATTLE = 2;       //战斗报告
+    EXPLOITATION = 3; //采集报告
+  }
+  enum STATE {
+    UNREAD = 1; //未读
+    READ = 2;   //已读
+    USED = 3;   //已使用
+  }
+
+  required int32 index = 1;     //邮件编号
+  required TYPE type = 2;
+  optional STATE state = 3;
+  optional int32 passed_time = 4;       //多久之前发送
+  optional bool delete_after_used = 5;  //是否在使用完后删除
+
+  optional ResourceInfo reward_resource = 6;//奖励资源数量
+  repeated ItemInfo reward_items = 7;       //奖励物品数量
+  optional ResourceInfo lost_resource = 8;  //损失资源数量
+  repeated ItemInfo lost_items = 9;         //损失物品数量
+  optional int32 node_id = 10;              //相关的节点 id
+  optional bool battle_win = 11;
+  optional RivalInfo.TYPE enemy_type = 12;  //敌人的类型
+  optional bytes enemy_name = 13;           //敌人的名称
+  optional ExploitationInfo.TYPE exploitation_type = 14;//资源点类型
+
+  optional int32 basic_id = 15;
+  optional bytes subject = 16;   //主题
+  optional bytes sender = 17;    //发送者
+  optional bytes content = 18;   //内容
+  
+  optional int32 arena_title_level = 19;  //竞技场段位
+  optional int32 exploitation_level = 20;		//离线开采点等级
+  optional float exploitation_progress = 21;	//离线开采点进度
+  
+  optional int32 legendcity_position = 22;		//史实城官职
+  optional int32 legendcity_id = 23;		//史实城id
+  optional int32 arena_coin = 24;			//演武场代币奖励
+}
+
+//查询邮件
+message QueryMailReq {
+  required uint64 user_id = 1;
+}
+message QueryMailRes {
+  required int32 status = 1;
+  repeated MailInfo mails = 2;
+  optional ResourceInfo resource = 3;
+}
+
+//使用邮件
+message UseMailReq {
+  required uint64 user_id = 1;
+  repeated int32 mail_indexs = 2;
+  repeated ItemInfo items = 3;
+}
+message UseMailRes {
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+  optional RivalInfo rival = 3; //通过邮件查询复仇的对手
+}
+
+
+//删除邮件
+message DeleteMailReq {
+  repeated int32 mail_indexs = 1;
+}
+message DeleteMailRes {
+  required int32 status = 1;
+}
+

@@ -1,0 +1,11 @@
+{
+  "path": {
+    "test":"./"
+  },
+  "files":[
+    {
+      "name":"skill.xls",
+      "dicts":[{"sheets":["skill.ne", "skill1"], "key":["id"]}]
+    }
+  ]
+}

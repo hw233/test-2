@@ -1,0 +1,50 @@
+import "team.proto";
+
+package SanProto;
+
+message RankInfo {
+  required uint64 id = 1;     //id
+  required int32 ranking = 2; //排名
+  required bytes name = 3;    //名称
+  required int32 level = 4;   //等级
+  required int32 value = 5;   //得分
+  required int32 icon_id = 6; //显示 icon
+  optional int32 value1 = 7;  //扩展字段
+}
+
+message QueryRankingReq {
+  enum RankingType {
+    BATTLE_SCORE = 1; //战力榜
+    KILL_ENEMY = 2;   //杀敌榜
+    OFFICIAL_POSITION = 3;//官职榜
+    UNION_SEASON_BATTLE = 4;     //联盟战争赛季中联盟积分
+    UNION_SEASON_BATTLE_INDIVIDUALS = 5;//联盟战争赛季中个人战功
+    ACTIVITY_HERO = 6;  //拍卖英雄活动的积分榜
+    ANNEAL_HARD_MODE = 7;  //试炼场困难关卡通关排行榜
+    WORLD_BOSS = 8;	//世界boss杀敌排行榜
+    MELEE_ARENA = 9;  //乱斗演武场排行榜
+    TRANSFER_ARENA = 10; //换位演武场
+  }
+  required uint64 user_id = 1;
+  required RankingType type = 2;  //排行榜类型
+  required int32 start_index = 3; //本次查询的起始排名（指定查询范围，支持以后变更）
+  required int32 end_index = 4;   //本次查询的终止排名
+}
+
+message QueryRankingRes {
+  required int32 status = 1;
+  repeated RankInfo rankings = 2; //排行榜（不保证顺序），可能包含查询者自己的信息
+}
+
+//可能需要更新 TeamInfo，具体看客户端的需求
+message QueryRankingPlayerPowerfulTeamsReq {
+  required uint64 user_id = 1;
+  required uint64 target_user_id = 2; //待查询的玩家id
+}
+
+message QueryRankingPlayerPowerfulTeamsRes {
+  required int32 status = 1;
+  repeated TeamInfo teams = 2;
+  repeated int32 battle_tech_ids = 3; //战斗科技
+}
+

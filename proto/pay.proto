@@ -1,0 +1,84 @@
+import "item.proto";
+import "mission.proto";
+import "resource.proto";
+import "monarch.proto";
+
+package SanProto;
+
+
+//查询充值商店
+message QueryPayShopReq {
+}
+message QueryPayShopRes {
+  required int32 status = 1;
+  repeated int32 orders = 2;
+  optional int32 refresh_gap = 3;
+}
+
+enum PAY_PLATFORM {
+  ALIPAY = 1;  //支付宝
+  QIHOO = 2;   //奇虎360
+  ANYSDK = 3;  //通过ANYSDK
+  SOHA = 4;    //通过SOHA
+  LUNPLAY = 5; //通过LUNPLAY
+  PYW = 6;     //通过PYW（朋友玩）
+  ANQU = 7;    //通过ANQU（安趣）
+  SY185 = 8;   //通过185SY 
+  SY456 = 9;   //通过456SY(骑士助手)
+  ALI = 10;    //通过ALI
+  YYB = 11;    //通过YYB(应用宝)
+  APPSTORE = 12;    //通过app store
+  YIJIE = 13;       //通过易接
+  ZHANGLING = 14;   //通过掌灵H5
+  QUICK = 15;       //通过百园quick
+  SY39 = 16;        //通过39
+  ZYF = 17;         //通过掌宜付
+  SY94WAN = 18;     //通过94玩
+  FINGER = 19;      //通过指尖
+  MIYU = 20;      //通过米娱
+  ASDK = 21;      //通过asdk
+  PAYHUB = 22;      //通过payhub
+  ONESTORE = 23;    //通过onestore
+  GOOGLE = 24;      //通过google
+}
+
+//开始充值，从服务器获取订单信息
+message StartPayReq {
+  required PAY_PLATFORM platform = 1; //充值平台
+  required int32 order_id = 2;
+  optional bytes value = 3;    //有些平台需要传一些参数过来
+}
+message StartPayRes {
+  required int32 status = 1;
+  optional bytes order_info = 2;
+  optional bytes order_number = 3;
+}
+
+//结束充值，将客户端结果返回给服务器校验
+message FinishPayReq {
+  required PAY_PLATFORM platform = 1; //充值平台
+  required bytes order_number = 2;
+  required bytes pay_reply = 3;
+}
+message FinishPayRes {
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+  repeated MissionInfo missions = 3;//更新的月卡任务信息
+  optional MonarchInfo monarchInfo = 4;//更新vip
+  repeated ItemInfo items = 5;
+  optional bytes order_number = 6;
+}
+
+
+//结束充值，目前只支持soha，非游戏内方式的充值
+message TryFinishPayOutsideReq {
+  required PAY_PLATFORM platform = 1; //充值平台
+}
+message TryFinishPayOutsideRes {
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+  repeated MissionInfo missions = 3;//更新的月卡任务信息
+  optional MonarchInfo monarchInfo = 4;//更新vip
+  repeated ItemInfo items = 5;
+}
+

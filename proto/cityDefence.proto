@@ -1,0 +1,9 @@
+package SanProto;
+
+/* message DefenceInfo { */
+/*   required int32 building_basic_id = 1; //城防建筑 */
+/*   required int32 city_basic_id = 2;     //建筑所在的城池 */
+/*   required int32 location_index = 3;    //建筑在城池中的位置 */
+/* } */
+
+

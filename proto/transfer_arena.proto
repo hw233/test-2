@@ -1,0 +1,107 @@
+import "resource.proto";
+import "battle.proto";
+
+package SanProto;
+
+message TransferArenaInfo {
+  optional int32 remain_times=1;//剩余挑战次数
+  optional int32 cd_end_time=2;//冷却结束时间
+  repeated TransferArenaBattleRecordInfo records=3;//战斗记录
+}
+
+//换位竞技场对战记录
+message TransferArenaBattleRecordInfo {
+  required int32 index = 1;
+  optional uint64 user_id = 2;
+  optional bytes name = 3;
+  optional int32 level = 4;
+  optional int32 icon_id = 5;
+
+  enum STATUS {
+    ATTACK_WIN = 1;//进攻胜利
+    ATTACK_LOSE = 2;//进攻失败
+    DEFEND_WIN = 3;//防御成功
+    DEFEND_LOSE = 4;//防御失败
+  }
+  optional STATUS status = 6;
+  optional int32 self_rank = 7;
+  optional int32 rival_rank = 8;
+}
+
+message QueryTransferArenaReq{
+	
+}
+message QueryTransferArenaRes {
+  required int32 status = 1;
+  optional TransferArenaInfo arena_info = 2;
+}
+
+message BuyChallengeTimesReq{
+
+}
+
+message BuyChallengeTimesRes {
+  enum RET {
+    OK = 0;
+    NO_ENOUGH_GOLD = 1;
+    UPPER_LIMIT = 2;
+  }
+  required int32 status = 1;
+  optional RET ret = 2;
+  optional TransferArenaInfo arena_info = 3;
+  optional ResourceInfo resource = 4;
+}
+
+message ResetCDReq{
+	
+}
+
+message ResetCDRes{
+  enum RET {
+      OK = 0;
+      NO_ENOUGH_GOLD = 1;
+  }
+  required int32 status = 1;
+  optional RET ret = 2;
+  optional TransferArenaInfo arena_info = 3;
+  optional ResourceInfo resource = 4;
+}
+
+message StartTransferArenaBattleReq{
+	required uint64 target_id = 1;
+}
+
+message StartTransferArenaBattleRes{
+    required int32 status = 1;
+    optional RET ret = 2;
+
+    enum RET {
+        OK = 0;//成功
+        NO_CHALLENGE_TIMES = 1;
+        COOLING = 2;
+        TARGET_ERROR = 3;
+    }
+}
+
+message FinishTransferArenaBattleReq{
+	optional BattleOutputInfo battle = 1;
+  optional uint64 target_id = 2;
+}
+
+message FinishTransferArenaBattleRes{
+	required int32 status = 1;
+	optional RET ret = 2;
+	
+	enum RET {
+      OK = 0;//成功
+      TARGET_ERROR = 1;
+    }
+}
+
+message TransferArenaRewardReq {
+  required uint64 user_id = 1;
+  required int32 ranking = 2;
+}
+message TransferArenaRewardRes {
+  required int32 status = 1;
+}

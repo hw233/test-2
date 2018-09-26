@@ -1,0 +1,40 @@
+import "item.proto";
+import "resource.proto";
+
+package SanProto;
+
+message PrayStatus {
+  repeated ItemInfo items = 1;
+  repeated int32 choose_list = 2;
+  repeated int32 initial_list = 3;
+}
+
+message PrayData {
+  required PrayInfo.PrayType pray_type = 1;
+  required int32 current_pray_num = 2;
+  optional int32 refresh_num = 3;
+}
+
+message PrayInfo {
+  enum PrayType {
+    RESOURCE = 1;
+    HERO = 2;
+    MATERIAL = 3;
+    ALL = 4;
+  }
+  repeated PrayData prays = 1;
+  optional PrayStatus pray_status = 2;
+  optional int32 next_refresh_gap = 3;
+}
+
+message PrayReq {
+  optional PrayInfo.PrayType pray_type = 1;
+  optional int32 choose_index = 2;
+  repeated ItemInfo item = 3;
+  optional int32 cost_gold = 4;
+}
+message PrayRes {
+  required int32 status = 1;
+  optional PrayInfo pray_info = 2;
+  optional ResourceInfo resource = 3;
+}

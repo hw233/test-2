@@ -1,0 +1,38 @@
+import "hero.proto";
+
+package SanProto;
+
+message TeamInfo {
+
+  required int32 index = 1;
+
+  repeated HeroInfo heroes = 3;
+  optional int32 battle_node_id = 4;  //在战斗的节点
+  optional int32 union_battle_node_index = 5; //联盟战争防守节点
+  optional bool in_anneal_sweep = 6;	//在试炼场战斗
+  repeated int32 hero_positions = 7;    //武将对应乱斗阵容位置编号 
+}
+
+//变更编队信息请求
+message ModifyTeamsReq {
+  required uint64 user_id = 1;
+  repeated TeamInfo teams = 2;
+}
+
+message ModifyTeamsRes {
+  required int32 status = 1;
+}
+
+//刷新所有编队
+message RefreshAllTeamsReq {	
+  required uint64 trigger_user_id = 1; //刷新team的user id
+}
+message RefreshAllTeamsRes {
+  required int32 status = 1;
+}
+message ReceiveRefreshAllTeamsReq {	
+  required uint64 user_id = 1;
+}
+message ReceiveRefreshAllTeamsRes {
+  required int32 status = 1;
+}

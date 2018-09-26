@@ -1,0 +1,18 @@
+
+package SanProto;
+
+message ButtonTips {
+  enum INDEX {
+    ACTIVITY_SEVEN_DAY = 1; //开服七天活动
+    ACTIVITY_FIRST_PAY = 2; //首冲活动
+	ACTIVITY_DAILY = 3;     //每日活动
+	ACTIVITY_SHOP = 4;      //神秘商店活动
+	ACTIVITY_NORMAL = 5;    //普通活动
+	ACTIVITY_FESTIVAL = 6;  //节日活动
+	UNION_BATTLE = 7;       //联盟战按钮
+	ASSESS = 8;             //评定
+  } 
+  required INDEX index = 1;
+  optional int32 status = 2;      //0表示不显示，1表示显示
+  optional int32 redpoint = 3;    //0表示不显示红点，1表示显示红点
+}

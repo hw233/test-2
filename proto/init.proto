@@ -1,0 +1,97 @@
+import "monarch.proto";
+import "resource.proto";
+import "item.proto";
+import "city.proto";
+import "hero.proto";
+import "team.proto";
+import "technology.proto";
+import "mission.proto";
+import "building.proto";
+import "conscript.proto";
+import "mail.proto";
+import "user.proto";
+import "node.proto";
+import "wineShop.proto";
+import "guide.proto";
+import "arena.proto";
+import "dungeon.proto";
+import "energy.proto";
+import "pray.proto";
+import "chest.proto";
+import "union.proto";
+import "anneal.proto";
+import "boss.proto";
+import "activity.proto";
+import "tips.proto";
+
+package SanProto;
+
+message LoginReq {
+  required bytes name = 1;
+  required bytes password = 2;
+  required int32 region = 3;
+}
+
+message LoginRes {
+  required int32 status = 1;
+  optional uint64 user_id = 2;
+}
+
+message Flag {
+  required bytes flag_name = 1;
+  optional bool is_open = 2;
+}
+
+message InitInfo {
+  required MonarchInfo monarch = 1;
+  required ResourceInfo resource = 2;
+  repeated ItemInfo items = 3;
+  repeated HeroInfo heroes = 4;
+  repeated TeamInfo teams = 5;
+  required MapInfo map = 6;
+  repeated CityInfo cities = 7;
+  repeated BuildingInfo buildings = 8;
+  repeated TechnologyInfo techs = 9;
+  repeated ConscriptInfo conscripts = 10;
+  repeated MissionInfo missions = 12;
+  repeated MailInfo mails = 13;
+  optional SignInInfo sign_in = 14;
+  optional DrawInfo money_draw = 16;
+  optional DrawInfo gold_draw = 17;
+  optional GuideInfo guide = 18;
+  optional ArenaInfo arena = 19;
+  optional DungeonInfo dungeon = 20;
+  optional EnergyInfo energy_info = 21;
+  optional PrayInfo pray = 22;
+  optional ChestInfo chest = 23;
+  optional UnionBattleInfo.STAGE union_battle_stage = 24;
+  optional AnnealInfo anneal = 25;
+  repeated int32 hero_star = 26;
+  optional WorldBossInfo world_boss = 27;
+  optional ArenaInfo melee_arena = 28;   //乱斗演武场
+  optional TeamInfo melee_team = 29;     //乱斗阵容
+  repeated Flag flags = 32;
+  repeated ActivityInfo activities = 33;   //init时可以不传活动数据
+  repeated ExpandDungeonInfo expand_dungeons = 34;  //特殊副本
+  repeated bytes luas = 35;
+  repeated ButtonTips button_tips = 36;
+}
+
+message InitReq {
+  required uint64 user_id = 1;
+  optional bytes version = 2;     //当前版本
+  optional bytes cuid = 3;        //设备 id，Unity 提供
+  optional bytes platform = 4;    //平台: Android / iOS
+  optional bytes device_type = 5; //设备类型
+  optional bytes device_id = 6;   //设备标识，Android 为 Mac 地址，iOS 为 IDFA
+  optional bytes network_type = 7;//网络状态：WiFi/运营商网络
+  optional bytes os = 8;          //系统（版本）: Android 4.0 / iOS9
+  optional bytes channel_id = 9;  //渠道号
+}
+
+message InitRes {
+  required int32 status = 1;
+  optional InitInfo info = 2;
+  optional bool first_init = 3;
+}
+

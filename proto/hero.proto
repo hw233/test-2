@@ -1,0 +1,257 @@
+import "item.proto";
+import "resource.proto";
+
+package SanProto;
+
+message HeroInfo {
+  required int32 basic_id = 1;
+  optional int32 level = 2;
+  optional int32 exp = 3;
+  optional int32 star_level = 4;
+  optional int32 soldier_basic_id = 5;
+  optional int32 soldier_level = 6;
+  optional int32 first_skill_id = 7;
+  optional int32 second_skill_id = 8;
+  optional int32 third_skill_id = 9;
+  optional int32 fourth_skill_id = 10;
+  optional int32 equipment_weapon_id = 11;  //装备：武器
+  optional int32 equipment_armor_id = 12;   //装备：防具
+  optional int32 equipment_treasure_id = 13;//装备：宝物
+  optional int32 building_basic_id = 14;    //在哪个建筑中进行工作
+  optional int32 city_basic_id = 15;        //建筑所在的城池
+  optional int32 location_index = 16;       //建筑在城池中的位置
+  optional int32 node_id = 17;              //在那个资源点中进行采集
+  optional int32 battle_node_id = 18;       //在战斗的节点
+  optional int32 garrison_passed_time = 19; //只在驻守资源类建筑时使用
+  optional int32 evolution_level = 20;  //突破等级
+  repeated int32 stone_weapon = 21;     //武器宝石
+  repeated int32 stone_armor = 22;      //防具宝石
+  repeated int32 stone_treasure = 23;   //宝物宝石
+  repeated int32 hero_star = 24;        //将星
+  optional int32 hero_awakening = 25; 	//觉醒状态
+  optional RefineInfo hero_refine_info = 26;//洗髓状态
+  repeated RefineAttribute hero_refine_attributes = 27; //洗髓属性
+  repeated RefineAttribute hero_refine_limits = 28;      //洗髓属性上限
+}
+
+enum HERO_RET{
+  HERO_OK=0;
+  SOUL_NOT_ENOUGH=1;//精魄不足
+  STARSOUL_NOT_ENOUGH=2;//将魂石不足
+}
+
+//更新英雄信息
+//1 英雄使用经验丹，升级
+//2 英雄使用将魂石，升星
+//3 英雄更换兵种
+//4 英雄突破
+message UpdateHeroReq {
+  required uint64 user_id = 1;
+  required HeroInfo hero = 2;
+  repeated ItemInfo item = 3;
+  repeated ItemInfo use_item = 4; //使用的经验丹
+}
+message UpdateHeroRes{
+  required int32 status = 1;
+  optional HERO_RET ret=2;
+  optional ResourceInfo resource=3;
+}
+
+//升级技能
+message UpdateHeroSkillReq {
+  required uint64 user_id = 1;
+  required HeroInfo hero = 2;
+  required int32 index = 3; //技能的序号 [1-4]
+  repeated ItemInfo items = 4;
+}
+message UpdateHeroSkillRes {
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+}
+
+//灵魂石兑换英雄
+message GenerateHeroReq {
+  required uint64 user_id = 1;
+  required ItemInfo item = 2;
+  required HeroInfo hero = 3;
+}
+message GenerateHeroRes {
+  required int32 status = 1;
+  optional HeroInfo hero = 2;
+}
+
+//打开国士名册
+message OpenHeroListReq {
+  required uint64 user_id = 1;
+  required ItemInfo item = 2;
+}
+message OpenHeroListRes {
+  required int32 status = 1;
+  repeated ItemInfo items = 2;
+  repeated HeroInfo heroes = 3;
+}
+
+//结算英雄驻守经验
+message HeroUpdateGarrisonExpReq {
+  required uint64 user_id = 1;
+  repeated HeroInfo heroes = 2;
+}
+message HeroUpdateGarrisonExpRes {
+  required int32 status = 1;
+  repeated HeroInfo heroes = 2;
+}
+
+//更新装备：打造、进阶、精炼
+message UpdateHeroEquipmentReq {
+  enum TYPE {
+    WEAPON = 1;   //武器
+    ARMOR = 2;    //护甲
+    TREASURE = 3; //宝物
+  }
+
+  required uint64 user_id = 1;
+  required TYPE type = 2;       //装备的类型
+  required HeroInfo hero = 3;
+  repeated ItemInfo items = 4;  //产生变动的材料
+  optional int32 gold = 5;      //使用元宝的数量(如果额外花费了元宝)
+}
+
+message UpdateHeroEquipmentRes {
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+}
+
+//一键进阶、精炼
+message UpdateHeroEquipmentMaxReq {
+  enum TYPE {
+    WEAPON = 1;   //武器
+    ARMOR = 2;    //护甲
+    TREASURE = 3; //宝物
+  }
+
+  required uint64 user_id = 1;
+  required TYPE type = 2;       //装备的类型
+  required HeroInfo hero = 3;
+  required int32 targetId =4;  //目标id
+  repeated ItemInfo items = 5;  //产生变动的材料（消耗材料、返还材料）
+  optional int32 gold = 6;      //使用元宝的数量(如果额外花费了元宝)
+}
+message UpdateHeroEquipmentMaxRes {
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+}
+
+
+//镶嵌宝石
+message MountStoneReq {
+  required HeroInfo hero = 1;
+  required ItemInfo item = 2;
+}
+message MountStoneRes {
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+}
+
+//卸下宝石
+message DemountStoneReq {
+  repeated HeroInfo heros = 1;
+  required ItemInfo item = 2;
+}
+message DemountStoneRes {
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+}
+
+//升级宝石（与宝石合成不同的是，合成完后还镶嵌在装备上）
+message UpgradeStoneReq {
+  required HeroInfo hero = 1;
+  required ItemInfo item = 2;
+}
+message UpgradeStoneRes {
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+}
+
+
+message RebornHeroReq {
+  enum TYPE {
+    NORMAL = 1;   //普通重生
+    PERFECT = 2;    //完美重生
+  }
+  required TYPE type = 1;
+  required HeroInfo hero = 2;
+  repeated ItemInfo items = 3;
+}
+
+message RebornHeroRes {
+  enum REBORN_RET
+  {
+	  REBORN_SUCCESS = 0;
+	  REBORN_NEED_VIP = 1;
+	  REBORN_NEED_GOLD = 2;
+	  REBORN_ERROR = 3;
+  }
+  required int32 status = 1;
+  optional REBORN_RET return_ret = 2;
+  optional ResourceInfo resource = 3;
+}
+
+//武将觉醒
+message AwakeningHeroReq {
+  required HeroInfo hero = 1;
+  repeated ItemInfo items = 2;
+}
+
+message AwakeningHeroRes {
+  enum AWAKENING_RET {
+    SUCCESS = 0;
+    NEED_ITEM = 1;
+    ERROR_HERO = 2;
+    INVALID = 3;
+    ERROR_BUILDING = 4;
+  }
+  required int32 status = 1;
+  optional AWAKENING_RET return_ret = 2;
+}
+
+message RefineInfo
+{
+	required int32 refineLv = 1;
+	required int32 refineState = 2;
+}
+message RefineAttribute
+{
+	enum ATTRIBUTETYPE
+	{
+    LIFE = 0;               //生命值  
+    ATTACKSPEED = 1;        //攻速
+    POWER = 2;              //攻强
+    ARMOR = 3;              //护甲
+    CRITRATING = 4;         //暴击率
+    DODGERATING = 5;        //闪避率
+    PARRYRATING = 6;        //招架率
+    STRATAGEM = 7;          //计略
+    TACTICS = 8;            //阵法
+    INTERNALAFFAIRS = 9;    //内务
+    RESEARCH = 10;          //研究
+	}
+	required ATTRIBUTETYPE type = 1;
+	required int32 value = 2;
+}
+
+//洗髓
+message RefineHeroReq
+{
+	required HeroInfo hero = 1;
+}
+message RefineHeroRes {
+  enum REFINE_RET {
+    Refine_SUCCESS = 0;
+    Refine_NEED_ITEM = 1;
+    Refine_CANNT_UPGRADE = 2;
+  }
+  required int32 status = 1;
+  optional REFINE_RET return_ret = 2;
+  optional HeroInfo hero = 3;
+  repeated ItemInfo items = 4;
+}

@@ -1,0 +1,61 @@
+import "conscript.proto";
+import "battle.proto";
+import "item.proto";
+import "resource.proto";
+import "node.proto";
+import "mail.proto";
+import "hero.proto";
+import "monarch.proto";
+import "energy.proto";
+
+package SanProto;
+
+
+//获取委任物品（兑换虎符）
+message GetAppointItemReq {
+  required uint64 user_id = 1;
+  required ItemInfo item = 2;    //虎符
+}
+message GetAppointItemRes {
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+}
+
+
+//开始委任
+message StartAppointReq {
+  required uint64 user_id = 1;
+  required BattleInputInfo battle = 2;
+  optional NodeInfo node = 3;
+  optional ItemInfo item = 4;
+}
+message StartAppointRes{
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+  repeated ConscriptInfo conscripts = 3;
+}
+
+
+//结束委任
+message FinishAppointReq {
+  required uint64 user_id = 1;
+  optional NodeInfo node = 2;
+}
+message FinishAppointRes {
+  enum RET {
+    OK = 0;
+    FINISHED = 1;
+  }
+  required int32 status = 1;
+  optional BattleReward reward = 2;
+  optional ResourceInfo resource = 3;
+  optional MonarchInfo monarch = 4;
+  repeated ConscriptInfo conscripts = 5;
+  repeated NodeInfo nodes = 6;//新开启的节点
+  repeated ItemInfo items = 7;
+  repeated HeroInfo heros = 8;
+  repeated MailInfo mails = 9;
+  optional RET ret = 10;
+  optional NodeInfo node = 11;
+  optional EnergyInfo energy = 12;
+}

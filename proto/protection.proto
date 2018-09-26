@@ -1,0 +1,16 @@
+import "node.proto";
+import "item.proto";
+import "resource.proto";
+
+package SanProto;
+
+//node点保护
+message ProtectReq {
+  required uint64 user_id = 1;
+  required NodeInfo node = 2;
+  optional ItemInfo item = 3;
+}
+message ProtectRes {
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+}

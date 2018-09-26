@@ -1,0 +1,146 @@
+import "resource.proto";
+import "item.proto";
+import "hero.proto";
+import "conscript.proto";
+import "team.proto";
+import "node.proto";
+import "monarch.proto";
+import "mail.proto";
+import "arena.proto";
+import "legendcity.proto";
+import "boss.proto";
+import "dungeon.proto";
+import "energy.proto";
+
+package SanProto;
+
+//战场奖励
+message BattleReward {
+  optional ResourceInfo resource = 1;
+  repeated ItemInfo items = 2;
+  optional int32 hero_exp = 3;
+  optional int32 monarch_exp = 4;
+}
+
+//战场开始信息
+message BattleInputInfo {
+  repeated TeamInfo attack_teams = 1;
+  repeated TeamInfo defence_teams = 2;
+}
+
+//战场结束信息
+message BattleOutputInfo {
+  enum RESULT {
+    WIN = 0;
+    LOSE = 1;
+  }
+
+  required RESULT result = 1;
+
+  message HeroResult {
+    required HeroInfo hero = 1;
+    optional bool attend = 2;//是否参与了战斗
+    optional bool is_alive = 3;//是否存活
+    required int32 soldier_survival = 4;//存活的士兵数量
+  }
+
+  repeated HeroResult attack_heroes = 2;
+  repeated HeroResult defence_heroes = 3;
+  optional int32 relive_times = 4;    //无限重生的情况下，重生次数
+  optional int32 battle_limit_time=5;  //战斗最短时长限制,短于该时间表示玩家有非法加速行为
+  optional int32 battle_time=6;
+}
+
+enum BATTLE_TYPE {
+  BATTLE_NODE = 1;       //大地图节点上的战斗
+  BATTLE_REVENGE = 2;    //通过邮件复仇
+  BATTLE_ARENA = 3;      //演武场战斗
+  BATTLE_LEGENDCITY = 4; //史实城战斗
+  BATTLE_UNION = 5;      //联盟战争
+  BATTLE_ANNEAL = 6;     //试炼场战斗
+  BATTLE_WORLD_BOSS = 7;    //世界boss战斗
+  BATTLE_MELEE = 8;         //乱斗演武场战斗
+  BATTLE_COMPETITION = 9;  //比试
+  BATTLE_UNION_BOSS = 10;  //联盟副本
+  BATTLE_EXPANDDUNGEON=11;  //副本战斗
+  BATTLE_TRANSFER_ARENA = 12;      //换位演武场战斗
+  BATTLE_PLUNDER = 13;       //直接匹配掠夺 
+  BATTLE_PLUNDER_ENEMY = 14;       //掠夺模式中的复仇或搜索指定玩家后发起的战斗
+}
+
+//开始战斗
+message StartBattleReq {
+  required BATTLE_TYPE type = 1;
+  required BattleInputInfo battle = 2;
+  optional NodeInfo node = 3;
+  optional int32 mail_index = 4;  //有可能通过邮件复仇，带上邮件的 index
+  optional PlayerArenaInfo arena = 5; //演武场对手的信息
+  optional int32 city_id = 6;
+  optional int32 cost_gold = 7;
+  optional int32 anneal_type = 8;	//试炼场模式（简单或困难）
+  optional int32 anneal_floor = 9;
+  optional int32 anneal_level = 10;
+  optional int32 world_boss_choose_index = 11;  //世界Boss战斗时，选择的boss队伍index
+  optional int32 dungeon_id = 12;//选择的战斗副本
+  optional uint32 plunder_user_id = 13;    //掠夺对手的user_id
+  optional int32 expanddungeon_battle_level = 14;  //选择的扩展副本难度
+}
+message StartBattleRes {
+  required int32 status = 1;
+  optional BattleReward reward = 2;
+  optional ResourceInfo resource = 3;
+  repeated ConscriptInfo conscripts = 4;
+  optional LEGENDCITY_RET ret = 5;
+  optional int32 unlock_time = 6;
+  optional WORLDBOSS_RET world_boss_ret = 7;
+  optional EXPAND_DUNGEON_RET dungeon_ret = 8;
+  optional BATTLE_RET battle_ret = 9;
+}
+
+//结束战斗
+message FinishBattleReq {
+  required BATTLE_TYPE type = 1;
+  optional BattleOutputInfo battle = 2;
+  optional NodeInfo node = 3;
+  repeated ItemInfo items = 4;
+  optional MonarchInfo monarch = 5;
+  optional PlayerArenaInfo arena = 6; //演武场对手的信息
+  optional int32 city_id = 7;
+  optional bool is_skip = 8;          //是否跳过战斗
+  optional int32 dungeon_id = 9;      //选择的战斗副本
+  optional int32 dungeon_level = 10;  //完成的副本难度
+  optional uint32 plunder_user_id = 11;    //掠夺对手的user_id
+  optional int32 expanddungeon_battle_level = 12;  //选择的扩展副本难度
+}
+message FinishBattleRes {
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+  repeated ConscriptInfo conscripts = 3;
+  repeated NodeInfo nodes = 4;//新开启的节点
+  repeated ItemInfo items = 5;
+  repeated MailInfo mails = 6;
+  optional ArenaInfo arena = 7; //演武场信息
+  optional LEGENDCITY_RET ret = 8;
+  optional WORLDBOSS_RET world_boss_ret = 9;
+  optional WorldBossInfo boss = 10;
+  optional BATTLE_RET battle_ret=11;
+
+  optional MonarchInfo monarch = 12;
+  optional BattleOutputInfo battle = 13;
+
+  optional ExpandDungeonInfo dungeon=14;  //扩展副本
+  optional EnergyInfo energy = 15;
+}
+
+enum BATTLE_RET  {     
+  BATTLE_OK=0;//战斗正常结束 
+  BATTLE_SPEED_UP=1;//战斗非法加速 
+  BATTLE_CONNOT_SKIP=2; 
+  
+  BATTLE_MONARCH_ERROR = 3;       //主公信息错误 
+  BATTLE_HERO_ERROR = 4;          //英雄信息错误 
+  BATTLE_RESOURCE_SHORTAGE = 5;   //资源不足
+
+  NOT_IN_BATTLE_TIME = 6;         //不在开启时间
+}
+

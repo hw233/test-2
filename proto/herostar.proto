@@ -1,0 +1,46 @@
+import "hero.proto";
+import "item.proto";
+import "resource.proto";
+
+package SanProto;
+
+//将星升级请求
+message StrengthHeroStarReq
+{
+    required int32 hero_star = 1;
+    repeated ItemInfo item = 2;     //消耗的物品列表
+    optional int32 gold = 3;
+}
+
+//将星升级回应
+message StrengthHeroStarRes
+{
+    required int32 status = 1;
+    optional ResourceInfo resource = 2;
+}
+
+//将星装备请求
+message WearHeroStarReq
+{
+    required HeroInfo hero = 1;     //装备完将星后的英雄信息
+    required int32 hero_star = 2;
+}
+
+//将星装备回应
+message WearHeroStarRes
+{
+    required int32 status = 1; 
+}
+
+//将星卸下请求
+message UnloadHeroStarReq
+{
+    required HeroInfo hero = 1;     //卸下将星后的英雄信息
+    required int32 hero_star = 2;
+}
+
+//将星卸下回应
+message UnloadHeroStarRes
+{
+    required int32 status = 1;
+}

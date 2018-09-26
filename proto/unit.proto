@@ -1,0 +1,108 @@
+//unit 模块接口
+import "legendcity.proto";
+
+package SanProto;
+
+//查询史实城信息
+message UnitQueryLegendCityReq {
+  required uint64 user_id = 1;
+  repeated int32 rivals_id = 2;
+  repeated int32 rivals_position_level = 3;
+  optional int32 rematch_position_level = 4;
+}
+message UnitQueryLegendCityRes {
+  required int32 status = 1;
+  optional LEGENDCITY_RET ret = 2;
+
+  optional bytes slogan = 3;
+  optional bool update_slogan_free = 4;
+  optional int32 tax = 5;
+  optional bool update_tax_free = 6;
+  optional int32 income_by_tax = 7;
+
+  optional int32 position_level = 8;
+  optional int32 reputation = 9;
+
+  repeated int32 invalid_rivals_id = 10; //失效的 rival
+  repeated uint64 rivals_id = 11;
+  repeated bool rivals_is_robot = 12;
+  repeated int32 rivals_position_level = 13;
+}
+
+//更新史实城信息：太守有权利执行
+message UnitUpdateLegendCityReq {
+  required uint64 user_id = 1;
+  optional bytes slogan = 2;
+  optional int32 tax = 3;
+  optional int32 gold = 4;
+}
+message UnitUpdateLegendCityRes {
+  required int32 status = 1;
+  optional LEGENDCITY_RET ret = 2;
+}
+
+message UnitCheckLegendCityReq {
+  required uint64 user_id = 1;
+  required uint64 rival_id = 2;
+  required int32 rival_position_level = 3;
+  optional bool win = 4;
+}
+message UnitCheckLegendCityRes {
+  required int32 status = 1;
+  optional LEGENDCITY_RET ret = 2;
+  optional int32 unlock_time = 3;
+  optional int32 user_position_level = 4;
+  optional int32 rival_position_level = 5;
+}
+
+//缴税
+message UnitBuyGoodsReq {
+  required uint64 user_id = 1;
+  required int32 pay = 2; //商品原价格
+  required int32 extra_pay = 3; //上缴的税
+  required int32 tax = 4; //税率
+}
+message UnitBuyGoodsRes {
+  required int32 status = 1;
+  optional LEGENDCITY_RET ret = 2;
+  optional int32 tax = 3;
+  optional int32 reputation = 4;
+}
+
+//获得声望
+message UnitAddReputationReq {
+  required int32 user_id = 1;
+  required int32 reputation = 2;
+}
+message UnitAddReputationRes {
+  required int32 status = 1;
+}
+
+//取消官职
+message UnitCancelPositionReq {
+  required int32 user_id = 1;
+  optional bool force = 2;
+}
+message UnitCancelPositionRes {
+  required int32 status = 1;
+  optional LEGENDCITY_RET ret = 2;
+  optional int32 unlock_time = 3;
+}
+
+//删除史实城
+message UnitDeleteLegendCityReq {
+}
+message UnitDeleteLegendCityRes {
+  required int32 status = 1;
+}
+
+//查询史实城官职榜信息
+message UnitGetPositionRankReq {
+}
+message UnitGetPositionRankRes {
+  required int32 status = 1;
+  repeated int32 positions_level = 2;
+  repeated int32 users_id = 3;
+  repeated bool users_is_robot = 4;
+}
+

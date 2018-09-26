@@ -1,0 +1,467 @@
+import "union.proto";
+import "item.proto";
+import "team.proto";
+
+package SanProto;
+
+//查询联盟信息
+message InternalQueryUnionReq {
+  required uint64 user_id = 1;
+}
+message InternalQueryUnionRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  optional UnionInfo union = 3;
+  repeated InternalDonateRecord donate_records = 4;
+  repeated UnionDonateTreasureBoxInfo boxes_info = 5;
+}
+
+//创建联盟
+message InternalCreateUnionReq {
+  required uint64 user_id = 1;
+  required bytes name = 2;
+  required int32 icon_id = 3;
+}
+
+//设置联盟
+message InternalUpdateUnionReq {
+  required uint64 user_id = 1;
+  optional bytes name = 2;
+  optional int32 icon_id = 3;
+  optional int32 need_level = 4;
+  optional UNION_JOIN_STATUS join_status = 5;
+  optional bytes announcement = 6;
+}
+
+//加入联盟
+message InternalJoinUnionReq {
+  required uint64 user_id = 1;
+  required bytes user_name = 2;
+  required int32 user_icon_id = 3;
+  required int32 user_level = 4;
+  required int32 user_battle_score = 5;
+}
+
+//审批
+message InternalApproveUnionReq {
+  required uint64 user_id = 1;
+  required uint64 target_user_id = 2;
+  required bool agree = 3;//是否同意
+}
+
+//人事管理
+message InternalManageUnionReq {
+  required uint64 user_id = 1;
+  required ManageUnionReq.OPERATION op = 2;
+  required uint64 target_user_id = 3;
+}
+
+//管理操作
+message InternalUnionOperateReq {
+  required uint64 operator_user_id = 1;
+  required bytes union_name = 2;
+  required int32 union_id = 3;
+  optional bool union_available = 4; //联盟是否存在（解散后不存在）
+  optional int32 time = 5;
+}
+message InternalUnionOperateRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+}
+
+//发起联盟援助
+message InternalStartUnionAidReq {
+  required uint64 user_id = 1;
+  required ItemInfo need_item = 2;
+}
+message InternalStartUnionAidRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  optional UnionAidInfo own = 3;//自己发布的援助信息
+}
+
+//结束联盟援助
+message InternalFinishUnionAidReq {
+  required uint64 user_id = 1;
+}
+message InternalFinishUnionAidRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  optional ItemInfo item = 3;
+}
+
+//查询联盟援助
+message InternalQueryUnionAidReq {
+  required uint64 user_id = 1;
+}
+message InternalQueryUnionAidRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  repeated UnionAidInfo aids = 3;//所有援助信息
+}
+
+
+//响应联盟援助
+message InternalRespondUnionAidReq {
+  required uint64 user_id = 1;
+  required uint64 target_user_id = 2;
+  required int32 item_basic_id = 3;
+}
+message InternalRespondUnionAidRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  optional int32 honor = 3;       //联盟荣誉
+  optional int32 exp = 4;         //主公经验
+  optional int32 gold = 5;        //元宝
+  optional int32 prosperity = 6;  //联盟繁荣度
+}
+
+//删除联盟
+message InternalDeleteUnionReq {
+}
+message InternalDeleteUnionRes {
+  required int32 status = 1;
+}
+
+//添加联盟荣誉
+message InternalAddUnionHonorReq {
+  required uint64 user_id = 1;
+  required int32 honor = 2;
+}
+message InternalAddUnionHonorRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+}
+
+//开始联盟聊天
+message InternalStartUnionChatReq {
+  required uint64 user_id = 1;
+}
+message InternalStartUnionChatRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  optional bytes roomname = 3;
+  optional bytes password = 4;
+}
+
+//查询联盟战争情况
+message InternalQueryUnionBattleReq {
+  optional uint64 user_id = 1;
+}
+message InternalQueryUnionBattleRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  optional UnionBattleInfo battle = 3;
+}
+
+//向另一个联盟发起联盟战争
+message InternalLaunchUnionBattleReq {
+  required int32 rival_union_id = 1;
+  required int32 rival_union_battle_index = 2;
+}
+message InternalLaunchUnionBattleRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  optional int32 rival_union_id = 3;
+  optional int32 rival_union_battle_index = 4;
+  optional bytes rival_union_name = 5;
+}
+
+//部署联盟战争防御
+message InternalDeployUnionBattleReq {
+  required int32 user_id = 1;
+  required int32 node_index = 2;
+  required int32 defender_user_id = 3;
+  optional bytes defender_user_name = 4;
+  optional int32 defender_user_icon = 5;
+  optional int32 defender_user_level = 6;
+  repeated TeamInfo teams = 7;
+  repeated int32 battle_tech_ids = 8;
+}
+
+//擂鼓
+message InternalDrumForUnionBattleReq {
+  required uint64 user_id = 1;
+  required int32 user_level = 2;
+}
+message InternalDrumForUnionBattleRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  optional UnionBattleInfo battle = 3;
+  optional int32 individual_battle_score_add = 4;
+}
+
+//领取战功阶段奖励
+message InternalAcceptUnionBattleIndividualStepReq {
+  required uint64 user_id = 1;
+  required int32 user_level = 2;
+  required int32 target_step = 3;
+}
+
+//联盟/成员获得 胜场积分/战功
+message InternalGainUnionBattleScoreReq {
+  optional int32 union_score = 1;
+  optional uint64 user_id = 2;
+  optional int32 individual_score = 3;
+}
+
+//添加联盟繁荣度
+message InternalAddUnionProsperityReq {
+  required int32 prosperity = 1;
+}
+message InternalAddUnionProsperityRes {
+  required int32 status = 1;
+}
+
+message UnionBattleRival {
+  optional bytes teams = 1;
+  optional bytes heroes_basic_id = 2;
+  optional bytes heroes_level = 3;
+  optional bytes heroes_star = 4;
+  optional bytes heroes_skill_id = 5;
+  optional bytes heroes_soldier_basic_id = 6;
+  optional bytes heroes_soldier_level = 7;
+  optional bytes heroes_equipment_id = 8;
+  optional bytes heroes_evolution_level = 9;
+  optional bytes heroes_stone = 10;
+}
+
+//开始战斗
+message InternalStartUnionBattleReq {
+  required bool is_attack_side = 1;
+  optional int32 node_index = 2;
+  optional int32 node_level = 3;
+  optional uint64 attacker_user_id = 4;
+  optional bytes attacker_user_name = 5;
+  optional int32 attacker_user_icon = 6;
+  optional int32 attacker_soldier_num = 7;
+  optional uint64 defender_user_id = 8;
+}
+message InternalStartUnionBattleRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  optional UnionBattleInfo battle = 3;
+  optional int32 unlock_time = 4;
+  optional UnionBattleRival rival = 5;
+}
+
+//结束战斗
+message InternalFinishUnionBattleReq {
+  required bool is_attack_side = 1;
+  required int32 node_index = 2;
+  required int32 node_level = 3;
+  required bool is_attacker_win = 4;
+  required uint64 attacker_user_id = 5;
+  required uint64 attacker_user_level = 6;
+  required uint64 defender_user_id = 7;
+  required int32 attacker_kills = 8;
+  required int32 defender_kills = 9;
+  optional int32 node_level_after_battle = 10;
+  optional bool is_node_broken_after_battle = 11;
+  optional UnionBattleInfo.STAGE battle_stage = 12;
+}
+message InternalFinishUnionBattleRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  optional UnionBattleInfo battle = 3;
+  optional int32 individual_battle_score_add = 4;
+  optional int32 node_level = 5;
+  optional bool is_node_broken_after_battle = 6;
+  optional UnionBattleInfo.STAGE battle_stage = 7;
+}
+
+//领取(查询)node宝箱奖励
+message InternalUnionBattleNodeRewardReq {
+  required uint64 user_id = 1;
+  required bytes user_name = 2;
+  required int32 icon_id = 3;
+  required int32 node_index = 4;
+}
+
+message InternalUnionBattleNodeRewardRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  optional BossBoxInfo box = 3;
+}
+
+//领取(查询)正常大宝箱奖励
+message InternalUnionBattleBoxReq {
+  required uint64 user_id = 1;
+  required bytes user_name = 2;
+  required int32 icon_id = 3;
+}
+
+message InternalUnionBattleBoxRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  optional BossBoxInfo box = 3;
+}
+
+
+message InternalQueryUnionDonateReq {
+  required uint64 user_id = 1;
+}
+
+message InternalDonateRecord {
+    required uint64 user_id = 1;
+    required bytes user_name = 2;
+    required int32 box_id = 3;
+    required DonateType grade = 4;
+    required int32 add_honor = 5;
+    required int32 add_progress = 6;
+    required int32 add_prosperity = 7;
+}
+
+message InternalQueryUnionDonateRes {
+  
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+
+  repeated UnionDonateTreasureBoxInfo boxes_info = 3;
+  repeated InternalDonateRecord donate_records = 4;
+}
+
+message InternalInitiateDonateReq {
+  required uint64 user_id = 1;
+  required int32 box_id = 2;
+}
+
+message InternalInitiateDonateRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+
+  optional UnionDonateTreasureBoxInfo box_info = 3;
+}
+
+message InternalStartUnionDonateReq {
+  required uint64 user_id = 1;
+  required bytes user_name = 2;
+  required int32 box_id=3;
+  required DonateType donate_type=4;
+  optional int32 money=5;
+  optional int32 gold=6;
+}
+
+message InternalStartUnionDonateRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+
+  repeated InternalDonateRecord donate_records = 3;
+  optional int32 honor = 4;
+  optional UnionDonateTreasureBoxInfo box_info = 5;
+}
+
+message InternalGetBoxRewardReq {
+  required uint64 user_id = 1;
+  required int32 box_id = 2;
+}
+
+message InternalGetBoxRewardRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+
+  optional TreasureBoxReward reward = 3;
+}
+
+message InternalRefreshBoxReq {
+  required uint64 user_id = 1;
+  required int32 box_id = 2;
+}
+
+message InternalRefreshBoxRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+
+  optional UnionDonateTreasureBoxInfo box_info=3;
+} 
+
+//自动盟主转让
+message InternalTryTransferUnionLeaderReq {
+  required uint64 user_id = 1;
+}
+
+message InternalTryTransferUnionLeaderRes {
+  enum TRANSFER_RET {
+    OK = 0;
+    NEEDNT = 1;
+  }
+  required int32 status = 1;
+  optional TRANSFER_RET ret = 2;
+}
+
+//领取(查询)boss宝箱奖励
+message InternalUnionBossBossRewardReq {
+  required uint64 user_id = 1;
+  required bytes user_name = 2;
+  required int32 icon_id = 3;
+  required int32 boss_step = 4;
+}
+
+message InternalUnionBossBossRewardRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  optional BossBoxInfo box = 3;
+}
+
+//重置攻击次数
+message InternalUnionBossResetAttackReq {
+  required uint64 user_id = 1;
+}
+
+message InternalUnionBossResetAttackRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+}
+
+//同步并获取boss信息
+message InternalSyncBossReq {
+  required int32 user_id = 1;
+  optional int32 boss_step = 2;
+  optional int32 boss_id = 3;
+
+  optional bytes user_name = 4;
+  optional int32 kill_addition = 5;
+}
+
+message InternalSyncBossRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+
+  optional int32 boss_step = 3;
+  optional int32 now_boss_step = 4;
+  optional int32 boss_id = 5;
+  optional int32 boss_status = 6;
+  optional int32 total_soldier_num = 7;
+  optional int32 current_soldier_num = 8;
+}
+
+//查询联盟boss信息
+message InternalQueryUnionBossReq {
+  required uint64 user_id = 1;
+}
+
+message InternalQueryUnionBossRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+
+  optional int32 last_update_time = 3;
+  repeated int32 bosses_id = 4;
+
+  optional int32 attack_id = 5;        //正在攻击的boss id
+  optional int32 attack_total_soldier_num = 6;
+  optional int32 attack_soldier_num = 7;   //正在攻击的boss血量
+
+  repeated BossBoxInfo boxes = 8;
+}
+
+//更新联盟boss信息
+message InternalUpdateUnionBossReq {
+  required uint64 user_id = 1;
+}
+message InternalUpdateUnionBossRes {
+  required int32 status = 1;
+  optional bool is_update = 2;
+  optional bool is_reset = 3;
+}
+
+

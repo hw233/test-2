@@ -1,0 +1,484 @@
+import "monarch.proto";
+import "team.proto";
+import "item.proto";
+import "resource.proto";
+import "boss.proto";
+
+package SanProto;
+
+enum UNION_POSITION {
+  LEADER = 1;
+  VICE = 2;
+  MEMBER = 3;
+}
+
+//联盟成员信息
+message UnionMemberInfo {
+  required int32 union_id = 1;
+  required MonarchInfo user = 2;
+  optional UNION_POSITION position = 3;//职位
+  optional int32 battle_score = 4;    //战力
+  optional int32 last_login_pass_time = 5; //最近一次登录到现在的时间
+  optional int32 current_honor = 6; //当前的联盟荣誉
+  optional int32 total_honor = 7; //历史上获得的联盟荣誉总和
+}
+
+//联盟加入申请
+message UnionApplicationInfo {
+  required int32 union_id = 1;
+  required MonarchInfo user = 2;
+  required int32 battle_score = 3;
+  required int32 time = 4;
+}
+
+enum UNION_JOIN_STATUS {
+  UNION_JOIN_ENABLE = 1;//任何人都可以加入
+  UNION_JOIN_VERIFY = 2;//需要验证
+  UNION_JOIN_DISABLE = 3;//不允许任何人
+}
+
+message UnionInfo {
+  required int32 id = 1;
+  required bytes name = 2;
+  required int32 icon_id = 3;
+
+  optional int32 level = 4;
+
+  optional int32 current_number = 5;//当前人数
+  optional int32 max_number = 6;//人数上限
+  optional int32 need_level = 7;//加入的等级限制
+  optional UNION_JOIN_STATUS join_status = 8;//加入状态
+
+  optional bytes announcement = 9;//公告
+  optional int32 prosperity = 10;//繁荣度
+  optional int32 recent_prosperity = 11;//近期繁荣度
+
+  repeated UnionMemberInfo members = 12;//成员列表
+  repeated UnionApplicationInfo applications = 13;//加入申请
+
+  repeated UnionAidInfo aids = 14;//所有援助信息
+  optional UnionAidInfo aid_own = 15;//自己发布的援助信息
+  optional int32 aid_lock_time_left = 16;//发布援助锁定时间剩余
+
+  optional UnionBattleInfo battle = 17; //联盟战争信息
+
+  repeated UnionDonateTreasureBoxInfo boxes_info = 18;   //捐献宝箱信息
+  optional UnionDonateInfo donate_info = 19;             //联盟捐献信息
+  
+  optional UnionBossInfo union_boss=20;//联盟boss
+}
+
+//联盟战争节点信息
+message UnionBattleNodeInfo {
+  enum STATUS {
+    EMPTY = 1;      //未部署
+    DEPLOYED = 2;   //防守方已部署
+    ENGAGED = 3;    //交战中
+    BEATEN = 4;     //进攻方已攻占
+  }
+
+  required int32 index = 1;
+  required STATUS status = 2;
+  optional MonarchInfo defender = 3;  //防守者信息
+  optional bool is_defender_robot = 4;//防守者是否是机器人（非真实玩家）
+  repeated TeamInfo teams = 5;        //防守阵容
+  repeated int32 battle_tech_ids = 6; //防守方的战斗科技
+  optional int32 battle_left_time = 7;//战斗剩余时间（秒）
+
+  optional int32 city_level = 8;            //城池等级
+  optional int32 current_soldier_num = 9;   //当前血量
+  optional int32 total_soldier_num = 10;    //总血量
+}
+
+//联盟战争地图信息
+message UnionBattleMapInfo {
+  required int32 union_id = 1;  //联盟 id（地图防守者）
+  required bytes name = 2;      //联盟名称
+  required int32 icon_id = 3;   //联盟 icon
+
+  required int32 season_score = 4;      //赛季中联盟胜场积分
+  optional int32 season_ranking = 5;    //赛季中联盟胜场积分排名
+  required int32 score = 6;             //此次战争中联盟胜场积分
+  required int32 score_individuals = 7; //此次战争中联盟成员战功之和
+
+  required int32 attack_buff_count = 8;   //进攻 buff 数量
+
+  required int32 map_level = 9;           //地图等级
+  required int32 defence_buff_count = 10; //防守 buff  数量
+
+  repeated UnionBattleNodeInfo nodes = 11;  //城池节点信息
+  
+  optional int32 attack_buff_temporary_count =12;  //临时进攻 buff 数量
+
+  repeated BossBoxInfo boxes = 13;   //每座城对应的宝箱
+}
+
+//联盟战争战斗记录
+message UnionBattleRecordInfo {
+  enum RESULT {
+    WIN = 0;
+    LOSE = 1;
+  }
+
+  required RESULT result = 1;   //攻击方是否胜利
+  required MonarchInfo attack_user = 2;
+  required MonarchInfo defence_user = 3;
+  required int32 passed_time = 4;
+}
+
+//联盟战争参与玩家信息
+message UnionBattleIndividualInfo {
+  required MonarchInfo user = 1;        //玩家信息
+  optional bool battle_lock = 2;        //被锁定，无法参战
+
+  optional int32 left_attack_count = 3; //剩余攻击次数
+  optional int32 refresh_attack_num = 4;//刷新的次数
+
+  optional int32 drum_count = 5;        //此次战斗中擂鼓数目
+
+  optional int32 score = 6;             //此次战争的个人战功
+  optional int32 score_accept_step = 7; //已经领取的战功奖励
+
+  optional int32 season_score = 8;      //个人赛季战功
+  optional int32 season_ranking = 9;    //个人战功排行
+}
+
+//联盟战争信息
+message UnionBattleInfo {
+  enum STAGE {
+    INVALID = 0;  //非法状态
+    IDLE = 1;     //无战争
+    PREPARE = 2;  //备战阶段
+    FIGHT = 3;    //交战中
+    CLOSE = 4;    //战斗结束
+  }
+
+  required int32 union_id = 1;
+  required STAGE stage = 2;                       //当前联盟战争状态
+  optional int32 rival_union_id = 3;
+  required int32 battle_left_time = 4;            //当前战争剩余时间（秒）
+  required int32 season_left_time = 5;            //赛季剩余时间（秒）
+
+  optional UnionBattleIndividualInfo user = 6;    //玩家自己的信息
+
+  optional UnionBattleMapInfo own_map = 7;        //己方联盟地图信息
+  optional UnionBattleMapInfo rival_map = 8;      //对方联盟地图信息
+
+  repeated UnionBattleRecordInfo records = 9;     //联盟战争战斗记录
+
+  optional int32 begin_battle_left_time = 10;     //当前进入战斗剩余时间（秒）
+  optional int32 after_battle_left_time = 11;     //当前战斗重置剩余时间（秒）
+
+  optional BossBoxInfo big_box = 12;              //攻下所有敌人城池后可领取的大宝箱
+
+}
+
+//联盟操作返回值
+enum UNION_RET {
+  UNION_OK = 0;
+
+  UNION_NAME_CONFLICT = 1;//联盟名称重复
+  UNION_MEMBER_INVALID = 2;//玩家失效
+
+  UNION_OVERTIME = 3;//超时
+  UNION_NO_AUTH = 4;//没有权限
+
+  UNION_JOIN_INVALID = 5;//联盟不允许加入
+  UNION_JOIN_FULL = 6;//联盟人数已满
+  UNION_JOIN_LEVEL_ERROR = 7;//不满足联盟等级限制
+  UNION_JOIN_WAIT_VERIFY = 8;//联盟加入审批中
+  UNION_JOIN_BELONG_UNION = 9;//已经在联盟中，无法加入其他联盟
+  UNION_APPLICATION_INVALID = 10;//联盟加入申请已失效
+
+  UNION_LOCKED = 11;//处于锁定状态，无法加入任何联盟
+  UNION_BELONG = 12;//玩家已经属于联盟
+  UNION_NOT_MATCHED = 13;//玩家已经属于联盟
+
+  UNION_OP_INVALID = 14;//管理操作无效
+
+  UNION_AID_LOCKED = 15;//联盟援助处于锁定状态
+  UNION_AID_INVALID = 16;//联盟援助已经失效
+
+  UNION_BATTLE_LAUNCH_INVALID = 17;//无法发起联盟战争
+  UNION_BATTLE_LAUNCH_DUP = 18;//重复发起联盟战争
+  UNION_BATTLE_LAUNCH_NORIVAL = 19;//未匹配到合适的对手
+  UNION_BATTLE_START_INVALID = 20;//开始战斗非法
+  UNION_BATTLE_FINISH_INVALID = 21;//结束战斗非法
+  UNION_BATTLE_DEPLOY_INVALID = 22;//部署非法
+  UNION_BATTLE_LOCKED = 23;//成员无法参战
+  UNION_BATTLE_DRUM_INVALID = 24;//擂鼓非法
+
+  UNION_DONATE_BOX_INVALID = 25;//捐献箱已失效
+  UNION_DONATE_NO_CONDITION = 26;//不满足条件
+
+  UNION_BOSS_SCORE_UNACCEPTABLE = 27;  //不可领取的战功宝箱
+  UNION_BOSS_REFRESH_ATTACK_GOLD_ERROR = 28; //重置攻击次数的元宝数量不正确
+  UNION_BOSS_REFRESH_ATTACK_GOLD_SHORTAGE = 29; //重置攻击次数元宝不足
+  UNION_BOSS_TEAM_UNATTACKABLE = 30; //boss队伍不可攻击
+  UNION_BOSS_INACTIVE = 31;        //boss不可攻打
+  UNION_BOSS_KILLED = 32;            //boss被杀
+}
+
+//获取联盟信息
+message QueryUnionReq {
+  required int32 union_id = 1;
+}
+message QueryUnionRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+
+  optional UnionInfo union = 3;
+  optional MonarchInfo monarch = 4;
+}
+
+//创建联盟
+message CreateUnionReq {
+  required bytes name = 1;
+  required int32 icon_id = 2;
+  required int32 gold_cost = 3;
+}
+message CreateUnionRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  optional UnionInfo union = 3;
+  optional MonarchInfo monarch = 4;
+}
+
+//设置联盟
+message UpdateUnionReq {
+  required int32 union_id = 1;
+  required int32 gold_cost = 2;
+  optional bytes name = 3;
+  optional int32 icon_id = 4;
+  optional int32 need_level = 5;
+  optional UNION_JOIN_STATUS join_status = 6;
+  optional bytes announcement = 7;
+}
+message UpdateUnionRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  optional UnionInfo union = 3;
+  optional MonarchInfo monarch = 4;
+}
+
+//查找联盟
+message SearchUnionReq {
+  enum TYPE {
+    SEARCH = 1;//查找
+    RECOMMEND = 2;//推荐
+    RANK = 3;//排名
+  }
+  required TYPE type = 1;
+  optional int32 union_id = 2;
+  optional bytes name = 3;
+}
+message SearchUnionRes {
+  required int32 status = 1;
+  optional int32 lock_left_time = 2;//锁定时间剩余（这段时间内不允许加入联盟）
+  repeated UnionInfo unions = 3;//联盟列表
+  repeated bool available = 4;//联盟是否可以加入
+
+  optional MonarchInfo monarch = 5;
+}
+
+//加入联盟（提交入盟申请）
+message JoinUnionReq {
+  required int32 union_id = 1;
+}
+message JoinUnionRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  optional UnionInfo union = 3;
+  repeated UnionAidInfo aids = 4;//所有援助信息
+  optional int32 aid_lock_time_left = 5;//发布援助锁定时间剩余
+  optional MonarchInfo monarch = 6;
+}
+
+//审批入盟申请
+message ApproveUnionReq {
+  required int32 union_id = 1;
+  required uint64 target_user_id = 2;
+  required bool agree = 3;//是否同意
+}
+message ApproveUnionRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  optional MonarchInfo monarch = 6;
+}
+
+//联盟管理
+message ManageUnionReq {
+  enum OPERATION {
+    KICKOUT = 1;//踢出联盟
+    PROMOTION = 2;//升职：任命副盟主
+    DEMOTION = 3;//降职：解职副盟主
+    DEMISE = 4;//转让盟主
+    DISMISS = 5;//解散联盟
+    EXIT = 6;//退出联盟
+    DISMISSFORCE = 7;//强制解散联盟
+  }
+
+  required OPERATION op = 1;
+  required int32 union_id = 2;
+  optional uint64 target_user_id = 3;
+}
+message ManageUnionRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  optional MonarchInfo monarch = 6;
+}
+
+//查看联盟成员信息
+message QueryUnionMemberReq {
+  required int32 union_id = 1;
+  required uint64 target_user_id = 2;
+}
+message QueryUnionMemberRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  repeated TeamInfo teams = 3;
+  repeated int32 battle_tech_ids = 4; //战斗科技
+  optional MonarchInfo monarch = 5;
+}
+
+//联盟援助信息
+message UnionAidInfo {
+  required MonarchInfo sender = 1;  //发起援助者
+  required int32 time = 2;          //发起时间
+  required ItemInfo need_item = 3;  //需要的物品
+  required int32 receive_num = 4;   //得到援助的数量
+  required bool available = 5;      //是否可以进行援助
+  optional bool finish = 6;         //是否完成
+}
+
+//查看联盟援助信息
+message QueryUnionAidReq {
+  required int32 union_id = 1;
+}
+message QueryUnionAidRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+
+  repeated UnionAidInfo aids = 3;//所有援助信息
+  optional UnionAidInfo aid_own = 4;//自己发布的援助信息
+  optional int32 lock_time_left = 5;//发布援助锁定时间剩余
+}
+
+//发起联盟援助
+message StartUnionAidReq {
+  required int32 union_id = 1;
+  required ItemInfo need_item = 2;
+}
+message StartUnionAidRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  optional UnionAidInfo own = 3;//自己发布的援助信息
+}
+
+//结束联盟援助
+message FinishUnionAidReq {
+  required int32 union_id = 1;
+}
+message FinishUnionAidRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  optional ItemInfo item = 3;
+}
+
+//响应联盟援助（施以援手）
+message RespondUnionAidReq {
+  required int32 union_id = 1;
+  required uint64 target_user_id = 2;
+  required ItemInfo item = 3;
+  required MonarchInfo monarch = 4;
+}
+message RespondUnionAidRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+  optional ResourceInfo resource = 3;
+  optional int32 union_prosperity = 4;  //联盟繁荣度
+}
+
+//添加联盟荣誉（内部接口）
+message AddUnionHonorReq {
+  required int32 union_id = 1;
+  required int32 honor = 2;
+}
+message AddUnionHonorRes {
+  required int32 status = 1;
+  optional UNION_RET ret = 2;
+}
+
+//宝箱奖励信息
+message TreasureBoxReward{
+    repeated int32 item_id=1;
+    repeated int32 item_num=2;
+    required ResourceInfo resource=3;
+}
+//宝箱信息
+message UnionDonateTreasureBoxInfo{
+      
+    enum TreasureBoxState{
+        IDLE = 1;//未发起捐献
+        DONATING = 2;//捐献中
+        UNLOCKED = 3;//已解锁可领取
+        NULL = 4;//不存在
+    }
+    required int32 treasurebox_id=1;
+    optional TreasureBoxReward reward=2;
+    optional int32 during_time=3;//宝箱解锁后已经过的时间
+    optional int32 donate_progress=4;
+    optional int32 next_refresh_time=5;
+    required TreasureBoxState current_state=6;
+    repeated DonateType donate_types=7;//返回可进行捐献的等级
+    optional bool is_refresh = 8;
+}
+
+//联盟捐献类型
+enum DonateType{
+    Primary = 1;//初级捐献
+    Intermediate = 2;//中级捐献
+    Advanced = 3;//高级捐献
+}
+
+//联盟捐献信息
+message UnionDonateInfo{
+    required int32 coldtime=1;
+    repeated UnionDonateRecord donate_records=2;
+}
+
+//捐献记录
+message UnionDonateRecord {
+    required bytes user_name = 1;
+    optional int32 money = 2;
+    optional int32 gold = 3;
+    optional int32 box_id = 4;
+    optional int32 progress = 5;
+    optional int32 prosperity = 6;
+}
+
+message UnionBossInfo{
+	optional WorldBossInfo current_boss = 1;
+  optional int32 current_boss_step = 2;
+	optional int32 attack_num = 3;    //剩下的攻击次数
+  optional int32 refresh_num = 4;
+	optional int32 score = 5;
+	repeated int32 boss_hero_id = 6;
+	repeated BossBoxInfo boxes = 7;
+  repeated int32 accepted_box_steps=8;  //领过的个人战功宝箱index
+  optional int32 remain_time = 9;
+}
+
+message BossBoxInfo{
+  required int32 id = 1;
+  repeated BossBoxUnionMemberInfo members = 2;
+}
+
+message BossBoxUnionMemberInfo{
+  optional uint64 user_id=1;
+  optional bytes name =2;
+  optional int32 headIconId=3;
+  optional int32 item_id=4;
+  optional int32 item_num=5;
+  optional int32 passedTime=6;
+}

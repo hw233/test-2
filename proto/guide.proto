@@ -1,0 +1,24 @@
+package SanProto;
+
+message GuideInfo {
+  repeated int32 stages = 1;
+}
+
+//完成新手引导
+message ForwardGuideReq {
+  required uint64 user_id = 1;
+  required int32 stage = 2;
+}
+message ForwardGuideRes {
+  required int32 status = 1;
+}
+
+//管理新手引导（内部接口）
+message ManageGuideReq {
+  optional GuideInfo finish = 1;  //完成的步骤
+  optional GuideInfo reset = 2;   //未完成的步骤
+}
+message ManageGuideRes {
+  required int32 status = 1;
+}
+

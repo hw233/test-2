@@ -1,0 +1,314 @@
+import "item.proto";
+import "hero.proto";
+import "resource.proto";
+
+package SanProto;
+
+
+//活动step的基础信息
+message ActivityStepBasicInfo {
+  required int32 id = 1;
+  optional int32 target = 2;
+  optional bool default_lock = 3;
+  repeated int32 heroes_basic_id = 4;
+  repeated ItemInfo reward_items = 5;
+  optional int32 gold = 6;
+  optional bytes description = 7;
+  optional int32 value1 = 8;
+  optional int32 value2 = 9;	
+}
+//限时搜索英雄的奖励基础信息
+message ActivityHeroRewardBasicInfo {
+  required int32 id = 1;
+  required int32 level = 2;
+  repeated ItemInfo reward_items = 3;
+  optional int32 basic_id = 4;
+  optional int32 num = 5;
+  optional int32 weight = 6;
+}
+//元宝夺宝
+message ActivityRewardBasicInfo {
+  required uint64 id = 1;
+  required int32 level = 2;
+  required ItemInfo reward_item = 3;
+}
+//活动的基础信息
+message ActivityBasicInfo {
+  enum STYLE {
+    ALL = 0;
+    SEVEN_DAY = 1;
+    FIRST_PAY = 2;
+    DAILY = 3;
+    SHOP = 4;
+    NORMAL = 5;
+    FESTIVAL = 6;
+  }
+
+  required int32 id = 1;
+  required int32 type_id = 2; //活动类型
+  optional bytes start_time = 3;
+  optional bytes end_time = 4;
+  optional int32 start_day = 5;
+  optional int32 end_day = 6;
+  repeated int32 steps_id = 7; //活动步骤信息
+  optional bytes icon_name = 8;  //活动icon
+  optional bytes name = 9;
+  optional bytes description = 10;  //活动描述
+  optional int32 hero_basic_id = 11;  //若是限时搜索英雄活动，则是英雄id
+  
+  repeated ActivityStepBasicInfo steps_info = 12;    //该活动的step详情
+  repeated ActivityHeroRewardBasicInfo hero_rewards_info = 13;  //该活动的reward详情
+
+  optional STYLE style_id = 14; //活动所属的大类型
+  optional int32 weight = 15;
+
+  repeated ActivityRewardBasicInfo rewards_info = 16;  //夺宝的reward详情
+  repeated Cat cats = 17;                              //招财猫奖励列表
+}
+
+
+
+message ActivityStepInfo {
+  required int32 id = 1;
+  repeated int32 reward_hero_basic_ids = 2;  //奖励武将basicid
+  repeated ItemInfo reward_items = 3;       //奖励物品
+  optional int32 reward_gold = 4;           //奖励元宝
+  optional int32 value1 = 5;        //不同活动有自己的用途
+  optional int32 value2 = 6;        //不同活动有自己的用途
+  optional bytes description = 7;   //活动步骤描述
+}
+
+message ActivityInfo {
+  enum STATUS {
+    LOCK = 0;       //锁定（不可领取）
+    AVAILABLE = 1;  //可领取
+    ACCEPTED = 2;   //已经领取
+  }
+
+  required int32 id = 1;
+  repeated int32 step_progress = 2;  //各步骤进度
+  repeated int32 step_target = 3;    //各步骤完成目标
+  repeated STATUS reward_status = 4; //奖励状态
+  optional int32 duration = 5;       //有效时间剩余（s），如果字段不存在，表示永久有效
+  optional bytes begin_date = 6;     //活动开始日期
+  optional bytes end_date = 7;       //活动结束日期
+  repeated ActivityStepInfo step_infos = 8; //活动步骤信息
+  optional int32 type_id = 9; //活动类型
+  optional bytes description = 10;  //活动描述
+  optional int32 hero_basic_id = 11;  //拍卖英雄活动的英雄id
+  optional bytes icon_name = 12;  //活动icon
+  optional bytes title = 13;  //活动icon
+  optional int32 weight = 14;    //权重
+  repeated ActivityRewardBasicInfo rewards_info = 15;  //夺宝的reward详情
+  repeated Cat cats = 16;                              //招财猫奖励列表
+}
+
+
+
+//活动操作返回值
+enum ACTIVITY_RET {
+  ACTIVITY_OK = 0;
+  ACTIVITY_TIMEERROR = 1;  //当前时间不可领取活动
+}
+
+//查询活动
+message QueryActivityReq {
+  optional ActivityBasicInfo.STYLE style_id = 1;   //活动所属的大类型
+}
+message QueryActivityRes {
+  required int32 status = 1;
+  repeated ActivityInfo activities = 2;
+}
+
+//对活动进行特殊操作
+message OperateActivityReq {
+  required int32 id = 1;
+  optional int32 step_id = 2;
+  optional int32 op_type = 3;     //操作类型
+  optional bytes op_input = 4;    //操作输入
+}
+message OperateActivityRes {
+  required int32 status = 1;
+  optional ActivityInfo activity = 2;
+  optional ResourceInfo resource = 3;
+}
+
+//领取活动奖励
+message AcceptActivityRewardReq {
+  required int32 id = 1;
+  required int32 step_id = 2;
+  repeated ItemInfo items = 3;
+  repeated HeroInfo heroes = 4;
+}
+message AcceptActivityRewardRes {
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+  repeated HeroInfo heroes = 3;
+  optional ACTIVITY_RET ret = 4;
+}
+
+//发放英雄拍卖活动的奖励
+message AwardActivityHeroReq {
+  required int32 user_id = 1;
+  required int32 activity_id = 2;
+  required int32 rank = 3;
+}
+message AwardActivityHeroRes {
+  required int32 status = 1;
+}
+
+//清空英雄拍卖活动的玩家积分
+message ClearActivityHeroScoresReq {
+  required int32 user_id = 1;
+}
+message ClearActivityHeroScoresRes {
+  required int32 status = 1;
+}
+
+//用户接受清空英雄拍卖活动的请求
+message ReceiveClearActivityHeroScoresReq {
+  required uint64 user_id = 1;
+}
+message ReceiveClearActivityHeroScoresRes {
+  required int32 status = 1;
+}
+
+
+
+//添加活动的基础数据
+message AddBasicActivityReq {
+  repeated ActivityBasicInfo activities = 1;
+}
+message AddBasicActivityRes {
+  required int32 status = 1;
+}
+//删除活动的基础数据
+message DeleteBasicActivityReq {
+  repeated int32 ids = 1;
+}
+message DeleteBasicActivityRes {
+  required int32 status = 1;
+}
+//查询活动的基础数据
+message QueryBasicActivityReq {
+  optional bool is_all = 1;		//查询所有活动基础数据
+  repeated int32 ids = 2;               //查询指定活动id的基础数据
+  optional bool with_detail = 3;        //是否需要一起查询跟活动有关的所有数据
+}
+message QueryBasicActivityRes {
+  required int32 status = 1;
+  repeated ActivityBasicInfo activities = 2;
+}
+
+
+//添加活动step的基础数据
+message AddBasicActivityStepReq {
+  repeated ActivityStepBasicInfo steps = 1;
+}
+message AddBasicActivityStepRes {
+  required int32 status = 1;
+}
+//删除
+message DeleteBasicActivityStepReq {
+  repeated int32 ids = 1;
+}
+message DeleteBasicActivityStepRes {
+  required int32 status = 1;
+}
+//查询
+message QueryBasicActivityStepReq {
+  optional bool is_all = 1;		//查询所有
+  repeated int32 ids = 2;       //查询指定
+}
+message QueryBasicActivityStepRes {
+  required int32 status = 1;
+  repeated ActivityStepBasicInfo steps = 2;
+}
+
+
+//添加英雄搜索活动奖励的基础数据
+message AddBasicActivityHeroRewardReq {
+  repeated ActivityHeroRewardBasicInfo rewards = 1;
+}
+message AddBasicActivityHeroRewardRes {
+  required int32 status = 1;
+}
+//删除
+message DeleteBasicActivityHeroRewardReq {
+  repeated int32 ids = 1;
+  repeated int32 levels = 2;
+}
+message DeleteBasicActivityHeroRewardRes {
+  required int32 status = 1;
+}
+//查询
+message QueryBasicActivityHeroRewardReq {
+  optional bool is_all = 1;		//查询所有
+  repeated int32 ids = 2;       //查询指定
+}
+message QueryBasicActivityHeroRewardRes {
+  required int32 status = 1;
+  repeated ActivityHeroRewardBasicInfo rewards = 2;
+}
+
+
+//添加初始账号的活动id
+message AddInitBasicActivityReq {
+  repeated int32 activities_id = 1;    //要添加的初始账号的活动id
+}
+message AddInitBasicActivityRes {
+  required int32 status = 1;
+}
+
+//删除初始账号的活动id
+message DeleteInitBasicActivityReq {
+  repeated int32 activities_id = 1;    //要添加的初始账号的活动id
+}
+message DeleteInitBasicActivityRes {
+  required int32 status = 1;
+}
+
+//查询初始账号的活动id
+message QueryInitBasicActivityReq {
+}
+message QueryInitBasicActivityRes {
+  required int32 status = 1;
+  repeated int32 activities_id = 2;
+}
+
+
+//转盘
+message TurntableDrawReq {
+  required uint64 user_id = 1;
+  required int32 times = 2;
+}
+message TurntableDrawRes {
+  required int32 status = 1;
+  optional int32 all_times = 2;
+  repeated ItemInfo items = 3;
+  optional ResourceInfo resource = 4;
+}
+
+//招财猫
+message GoldCutReq {
+  required uint64 user_id = 1;
+  required int32 id = 2;
+  required int32 step_id = 3;
+}
+message GoldCutRes {
+  required int32 status = 1;
+  optional int32 getgolds = 2;
+  optional ResourceInfo resource = 3;
+  optional int32 totalgolds = 4;
+}
+message Cat{
+  optional bytes name = 1;
+  optional int32 gold = 2;
+}
+//查询最近招财猫的奖励
+message QueryCatReq {
+}
+message QueryCatRes {
+  required int32 status = 1;
+  repeated Cat cats = 2;
+}  

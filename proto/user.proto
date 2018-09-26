@@ -1,0 +1,87 @@
+import "resource.proto";
+import "hero.proto";
+import "item.proto";
+
+package SanProto;
+
+//签到奖励
+message SignInGift {
+  optional ItemInfo item = 1;
+  optional HeroInfo hero = 2;
+}
+
+//签到 VIP 加成
+message SignInVipAddition {
+  optional int32 vip_level = 1;
+  optional int32 vip_times = 2;
+  optional int32 gift_index = 3;
+}
+
+//签到信息
+message SignInInfo {
+  repeated SignInGift gifts = 1;
+  repeated SignInVipAddition vip_additions = 2;
+  required int32 current_index = 3;   //当月已经签到的天数
+  required int32 available_index =4;  //此次登录可以签到的总天数（包括已经签过的）
+}
+
+//执行签到
+message SignInReq {
+  required uint64 user_id = 1;
+  optional int32 index = 2;
+}
+
+message SignInRes {
+  required int32 status = 1;
+  optional ItemInfo item = 2;
+  optional HeroInfo hero = 3;
+}
+
+//使用兑换码
+message UseCDkeyReq {
+  required bytes key = 1;
+}
+message UseCDkeyRes {
+  required int32 status = 1;
+  optional bytes reason = 2;
+  optional int32 goodybag_id = 3;
+  optional ResourceInfo resource = 4;
+  repeated ItemInfo items = 5;
+}
+
+//接受邀请信息
+enum INVITE_RET {
+  INVITE_OK = 0;
+  INVITE_DUPLICATE = 1;//重复邀请
+  INVITE_CODE_INVALID = 2;//邀请码无效
+  INVITE_CODE_REACH_LIMITED = 3;//邀请码使用已达上限
+}
+
+message InviteReq {
+  optional bytes invite_code = 1;
+  optional uint64 invitee_id = 2;
+  optional uint64 invitee_level = 3;
+}
+
+message InviteRes {
+  required int32 status = 1;
+  optional INVITE_RET ret = 2;
+  optional uint64 inviter_user_id = 3;
+}
+
+//用户基本信息
+message UserBasicInfo {
+  required uint64 user_id = 1;
+  optional int32 level = 2;
+  optional int32 exp = 3;
+  optional int32 vip_level = 4;
+  optional int32 vip_points = 5;
+  optional bytes name = 6;
+  optional int32 create_time = 7;
+  optional int32 last_login_time = 8;
+  optional int32 team_count = 9;
+  optional int32 country = 10;   //1:魏 2:蜀 3:吴
+  optional int32 coin = 11;      //游戏内产生的gold数
+  optional int32 payment = 12;   //玩家充值的金额（元）
+}
+

@@ -1,0 +1,33 @@
+import "resource.proto";
+import "item.proto";
+import "monarch.proto";
+import "energy.proto";
+package SanProto;
+
+message MissionInfo {
+  required int32 basic_id = 1;
+  optional int32 current_num = 2;
+}
+
+//完成任务（领取奖励）
+message FinishMissionReq {
+  required uint64 user_id = 1;          //用户id
+  required MissionInfo mission = 2;     //任务信息
+  repeated ItemInfo items = 3;
+  optional MonarchInfo monarch = 4;     //任务完成后主公获得的经验
+}
+message FinishMissionRes {
+  required int32 status = 1;            //响应状态，0，成功，1，失败
+  optional ResourceInfo resource = 2;   //资源情况
+  optional EnergyInfo energy_info = 3;
+}
+
+//更新第50名用户的等级(内部接口)
+message UpdateLastUserLevelReq {
+  required uint64 user_id = 1;
+}
+
+message UpdateLastUserLevelRes {
+  required int32 status = 1;
+  optional int32 level = 2;
+}

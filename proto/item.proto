@@ -1,0 +1,55 @@
+import "resource.proto";
+import "energy.proto";
+import "monarch.proto";
+
+package SanProto;
+
+message ItemInfo {
+  required int32 basic_id = 1;
+  required int32 num = 2;
+}
+
+//出售物品、使用资源包类物品，获取资源
+message UseItemForResourceReq  {
+  required uint64 user_id = 1;
+  repeated ItemInfo item = 3;
+}
+message UseItemForResourceRes{
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+  optional EnergyInfo energy_info = 3;
+}
+
+//使用物品
+message UseItemReq  {
+  required uint64 user_id = 1;
+  optional MonarchInfo monarch = 2;
+  repeated ItemInfo item = 3;
+}
+message UseItemRes{
+	required int32 status = 1;
+	optional ResourceInfo resource = 2;
+	optional EnergyInfo energy_info = 3;
+}
+
+//物品合成
+message ComposeItemsReq  {
+  required uint64 user_id = 1;
+  required ItemInfo item = 2;    //目标合成物品
+  repeated ItemInfo item_source = 3; //合成所需原始材料
+}
+message ComposeItemsRes {
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+}
+
+//使用主公经验丹，升级主公经验
+message UpgradeMonarchReq {
+  required uint64 user_id = 1;
+  required MonarchInfo monarch = 2;
+  required ItemInfo item = 3;
+}
+message UpgradeMonarchRes {
+  required int32 status = 1;
+}
+

@@ -1,0 +1,45 @@
+import "resource.proto";
+import "item.proto";
+import "team.proto";
+
+package SanProto;
+
+//敌人信息
+message RivalInfo {
+  enum TYPE {
+    PVE_RESOURCE = 1;
+    PVP_CITY = 2;
+    PVP_RESOURCE = 3;
+    PVE_BANDIT = 4;
+    PVE_REBEL = 5;
+    PVE_DUNGEON = 6;
+    PVP_ARENA = 7;
+    PVP_LEGENDCITY = 8;
+	PVE_WORLDBOSS = 9;
+	PVP_MELEE = 10;
+	PVE_UNIONBOSS = 11;
+	PVE_EXPAND_DUNGEON = 12;
+	PVP_PLUNDER = 13;
+	PVP_PLUNDER_ENEMY = 14;
+  }
+
+  optional int32 node_id = 1;
+  required TYPE type = 2;
+  optional int32 rival_id = 3;
+  optional int32 level = 4;
+  optional bytes name = 5;
+  optional int32 icon_id = 6;
+  optional int32 score = 7;
+  repeated TeamInfo teams = 8;//对手阵容信息
+  repeated int32 buff_ids = 9;
+  repeated int32 battle_tech_ids = 10;//战斗科技
+
+  //战利品
+  optional ResourceInfo reward_resource = 11;
+  repeated ItemInfo reward_items = 12;
+  
+  //所属国家势力
+  optional int32 country = 13;    //1:魏 2:蜀 3:吴
+}
+
+

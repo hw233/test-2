@@ -1,0 +1,164 @@
+import "resource.proto";
+import "item.proto";
+import "mail.proto";
+import "hero.proto";
+import "team.proto";
+package SanProto;
+
+
+//扫荡信息
+message SweepInfo {
+  enum DIRECTION {
+    NONE = 0;
+	WEAPON = 1;
+	ARMOR = 2;
+	TREASURE = 3;
+  }
+  optional DIRECTION direction = 1;
+  optional int32 floor = 2;		//扫荡的层
+  repeated TeamInfo teams = 3;		//扫荡的部队
+  optional int32 total_time = 4;	//扫荡总耗时
+  optional int32 passed_time = 5;	//扫荡委任的耗时
+}
+
+//扫荡一次的奖励
+message SweapReward {
+  optional ResourceInfo resource = 1;
+  repeated ItemInfo items = 2;
+}
+
+//通关记录
+message AnnealRecordInfo {
+  enum TYPE {
+    FIRST_FINISH = 1;	//首次通关
+	FAST_FINISH = 2;	//最快通关
+  }
+  required TYPE type = 1;
+  optional bytes name = 2;
+  optional int32 level = 3;
+  optional int32 icon_id = 4;
+  optional int32 finish_passed_time = 5;	//通关后已过去的时间
+  optional int32 cost_time = 6;				//战斗消耗的时间
+}
+
+//模式信息
+message AnnealMode {
+  enum TYPE {
+    NORMAL = 1;	//简单模式
+	HARD = 2;	//困难模式
+  }
+  optional TYPE type = 1;
+  optional int32 floor = 2;		//当前层
+  optional int32 level = 3;		//当前关
+  optional bool is_floor_finished = 4;	//本层是否已通过
+  optional bool is_reward_received = 5;	//本层奖励是否已领
+  repeated ItemInfo reward_items = 6;	//当前层的过关奖励
+}
+
+//试炼场信息信息
+message AnnealInfo {
+  optional int32 attack_num = 1;
+  optional int32 passed_time = 2;	//攻击次数自增已过时间
+  optional int32 buy_num = 3;	//已购买攻击次数
+  optional int32 next_refresh_gap = 4;	//下次攻击次数刷新时间间隔
+  optional AnnealMode normal_mode = 5;
+  optional AnnealMode hard_mode = 6;
+  
+  optional SweepInfo sweep = 7;		//扫荡信息
+  repeated int32 hard_attack_num = 8;   //困难模式攻击次数
+  repeated int32 hard_reset_num = 9;      //重置的次数
+}
+
+//请求试炼场信息
+message QueryAnnealInfoReq {
+}
+message QueryAnnealInfoRes {
+  required int32 status = 1;
+  optional AnnealInfo anneal = 2; 	//多种模式对应的试炼信息
+}
+
+//购买攻击次数
+message BuyAttackNumReq {
+  optional int32 buy_num = 1;
+  optional ItemInfo item = 2;
+}
+message BuyAttackNumRes {
+  required int32 status = 1;
+  optional AnnealInfo anneal = 2;
+  optional ResourceInfo resource = 3;
+}
+
+//领取过关奖励
+message GetPassRewardReq {
+  required AnnealMode.TYPE mode_type = 1;
+  repeated ItemInfo items = 2; 			//领取奖励
+}
+message GetPassRewardRes {
+  required int32 status = 1;
+  optional AnnealInfo anneal = 2;
+  optional ResourceInfo resource = 3;
+}
+
+//扫荡
+message StartSweepReq {
+  optional SweepInfo.DIRECTION direction = 1;
+  optional int32 floor = 2;		//扫荡的层
+  optional int32 total_time = 3;	//扫荡总耗时
+  repeated TeamInfo teams = 4;
+  optional int32 anneal_type = 5; //扫荡难度
+  optional int32 attack_num = 6; //扫荡次数,与扫荡总耗时互斥
+  optional int32 level = 7;		//扫荡的关
+}
+message StartSweepRes {
+  required int32 status = 1;
+  optional AnnealInfo anneal = 2;
+}
+message FinishSweepReq {
+}
+message FinishSweepRes {
+  required int32 status = 1;
+  repeated SweapReward reward = 2;
+  optional AnnealInfo anneal = 3;
+  optional ResourceInfo resource = 4;
+  repeated ItemInfo items = 5;
+  repeated HeroInfo heros = 6;
+  repeated MailInfo mails = 7;
+}
+
+//查询记录
+message QueryAnnealRecordReq {
+  optional int32 floor = 1;
+}
+message QueryAnnealRecordRes {
+  required int32 status = 1;
+  repeated AnnealRecordInfo records = 2;
+}
+
+
+//向common更新记录
+message UpdateAnnealRecordReq {
+  optional int32 floor = 1;
+  repeated AnnealRecordInfo records = 2;
+}
+message UpdateAnnealRecordRes {
+  required int32 status = 1;
+}
+
+//重置困难攻击次数
+message ResetHardAttackNumReq{
+	required int32 floor = 1;
+}
+
+message ResetHardAttackNumRes{
+	required int32 status = 1;
+	optional AnnealInfo anneal = 2;
+	optional ResourceInfo resource = 3;
+	optional RET ret = 4;
+	
+	enum RET {
+    OK = 0;
+		GOLD_NOT_ENOUGH = 1;	//元宝不足
+		VIP_NOT_ENOUGH = 2;	//vip等级不足
+  }
+}
+

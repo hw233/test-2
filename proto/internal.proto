@@ -1,0 +1,489 @@
+//server 内部接口，不对 client 开放
+import "item.proto";
+import "resource.proto";
+import "hero.proto";
+import "rival.proto";
+import "node.proto";
+import "legendcity.proto";
+import "anneal.proto";
+import "user.proto";
+
+package SanProto;
+
+//添加物品
+message AddItemReq {
+  required uint64 user_id = 1;
+  repeated ItemInfo items = 2;
+}
+message AddItemRes {
+  required int32 status = 1;
+}
+
+//添加资源
+message AddResourceReq {
+  required uint64 user_id = 1;
+  required ResourceInfo resource = 2;
+}
+message AddResourceRes {
+  required int32 status = 1;
+}
+
+//获得声望
+message AddReputationReq {
+  required int32 city_id = 1;
+  required int32 reputation = 2;
+}
+message AddReputationRes {
+  required int32 status = 1;
+}
+
+//添加英雄
+message AddHeroReq {
+  required uint64 user_id = 1;
+  required HeroInfo hero = 2;
+}
+message AddHeroRes {
+  required int32 status = 1;
+}
+
+
+//向指定玩家发送邮件
+message CustomMailInfo {
+  optional int32 basic_id = 1;
+
+  optional bytes subject = 2;   //主题
+  optional bytes sender = 3;    //发送者
+  optional bytes content = 4;   //内容
+
+  optional ResourceInfo reward_resource = 5;//奖励资源数量
+  repeated ItemInfo reward_items = 6;       //奖励物品数量
+  optional ResourceInfo lost_resource = 7;  //损失资源数量
+  repeated ItemInfo lost_items = 8;         //损失物品数量
+  optional int32 node_id = 9;               //相关的节点 id
+  optional ExploitationInfo.TYPE exploitation_type = 10;//资源点类型
+  optional bool battle_win = 11;
+  optional uint64 enemy_user_id = 12;       //敌人的 user id
+  optional bytes enemy_name = 13;           //敌人的名称
+  optional RivalInfo.TYPE enemy_type = 14;  //敌人的类型
+}
+message AddMailReq {
+  required uint64 user_id = 1;
+  required uint64 recipients_user_id = 2; //收件人 user id
+
+  required CustomMailInfo mail = 3;
+}
+message AddMailRes {
+  required int32 status = 1;
+}
+
+//玩家接收邮件
+message ReceiveMailReq {
+  required uint64 user_id = 1;
+  required CustomMailInfo mail = 2;
+}
+message ReceiveMailRes {
+  required int32 status = 1;
+}
+
+//删除用户数据
+message DeleteUserReq {
+  required uint64 user_id = 1;
+  optional bool force = 2;
+}
+message DeleteUserRes {
+  required int32 status = 1;
+}
+
+//清楚指定用户id的缓存
+message ClearUsersCacheReq {
+  repeated uint64 users_id = 1;
+}
+message ClearUsersCacheRes {
+  required int32 status = 1;
+}
+
+//战斗结果通知
+message BattleResultNoticeReq {
+  required uint64 user_id = 1;
+  required bool win = 2;
+  required bytes rival_name = 3;
+  required uint64 rival_user_id = 4;
+  required RivalInfo.TYPE rival_type = 5;
+  optional int32 lost_money = 6;
+  optional int32 lost_food = 7;
+  optional int32 rival_level = 8;
+  optional int32 rival_icon_id = 9;
+  optional int32 rival_country = 10;
+  optional int32 rival_score = 11;
+}
+message BattleResultNoticeRes {
+  required int32 status = 1;
+}
+
+//史实城战斗结果通知
+message LegendCityBattleResultNoticeReq {
+  required uint64 city_id = 1;
+  required LegendCityRecord record = 2;
+}
+message LegendCityBattleResultNoticeRes {
+  required int32 status = 1;
+}
+
+//触发指定战争/随机事件
+message TriggerCustomEventReq {
+  required uint64 user_id = 1;
+  required int32 node_basic_id = 2;
+  optional ExploitationInfo.TYPE exploit_type = 3;
+  optional int32 exploit_level = 4;
+  optional RivalInfo.TYPE rival_type = 5;
+  optional int32 rival_score_min = 6;
+  optional int32 rival_score_max = 7;
+  optional LuckyEventInfo.TYPE event_type = 8;
+}
+message TriggerCustomEventRes {
+  required int32 status = 1;
+}
+
+//竞技场战斗结果通知
+message ArenaResultNoticeReq {
+  required uint64 user_id = 1;
+  required bytes rival_name = 2;
+  required uint64 rival_user_id = 3;
+  required int32 rival_level = 4;
+  required int32 rival_icon_id = 5;
+  required int32 status = 6;
+  required int32 rival_score = 7;
+}
+message ArenaResultNoticeRes {
+  required int32 status = 1;
+}
+
+//向指定玩家发送离线更新演武场信息
+message UpdateArenaOfflineReq {
+  required uint64 user_id = 1;
+  required uint64 trigger_user_id = 2; //更新演武场的user id
+}
+message UpdateArenaOfflineRes {
+  required int32 status = 1;
+}
+
+//用户接受离线更新演武场的请求
+message ReceiveArenaOfflineReq {
+  required uint64 user_id = 1;
+}
+message ReceiveArenaOfflineRes {
+  required int32 status = 1;
+}
+
+//添加活动
+message AddActivityReq {
+  required uint64 target_user_id = 1;
+  repeated int32 activities = 2;
+}
+message AddActivityRes {
+  required int32 status = 1;
+}
+//活动邀请
+message ActivityInvitationReq {
+  repeated int32 activities = 1;
+}
+message ActivityInvitationRes {
+  required int32 status = 1;
+}
+
+//删除史实城
+message DeleteLegendCityReq {
+  repeated int32 citys_id = 1;
+}
+message DeleteLegendCityRes {
+  required int32 status = 1;
+}
+
+//添加vip点数
+message AddVipPointsReq {
+  required uint64 user_id = 1;
+  required int32 pay_price = 2;
+}
+//添加vip点数
+message AddVipPointsRes {
+  required int32 status = 1;
+}
+
+//发放史实城官职奖励
+message AwardLegendCityReq {
+  required int32 user_id = 1;
+  required int32 city_id = 2;
+  required int32 position_level = 3;
+}
+message AwardLegendCityRes {
+  required int32 status = 1;
+}
+
+//查询所有玩家 user id
+message GetAllReq {
+  enum TYPE {
+    USER = 1;
+    LEGENDCITY = 2;
+    UNION = 3;
+  }
+
+  required TYPE type = 1;
+}
+message GetAllRes {
+  required int32 status = 1;
+  repeated uint64 ids = 2;
+}
+
+//查询史实城官职榜信息
+message GetLegendCityPositionRankReq {
+}
+message GetLegendCityPositionRankRes {
+  required int32 status = 1;
+  repeated LegendCityPositionInfo positions = 2;
+}
+
+//删除联盟
+message DeleteUnionReq {
+  repeated int32 unions_id = 1;
+}
+message DeleteUnionRes {
+  required int32 status = 1;
+}
+
+//删除common
+message DeleteCommonReq {
+}
+message DeleteCommonRes {
+  required int32 status = 1;
+}
+
+//增加杀敌数
+message AddKillEnemyNumReq {
+  required int32 add_num = 1;
+}
+message AddKillEnemyNumRes {
+  required int32 status = 1;
+}
+
+//联盟/成员获得 胜场积分/战功
+message GainUnionBattleScoreReq {
+  required int32 score = 1;
+  optional int32 union_id = 2;
+}
+message GainUnionBattleScoreRes {
+  required int32 status = 1;
+}
+
+//强制改变联盟战争状态
+message ForceUpdateUnionBattleReq {
+  enum OP {
+    SEASON_FORWARD = 1; //进入下一个赛季
+    SEASON_RESET = 2;   //重置赛季
+    BATTLE_FORWARD = 3; //进入下一场战争
+    BATTLE_FIGHT = 4;   //战争进入战斗阶段
+    BATTLE_CLOSE = 5;   //战争进入结束阶段
+    BATTLE_FINISH = 6;  //战争结束
+    SEASON_FINISH = 7;  //置赛季结束
+    SEASON_SYNC = 8;    //置赛归位，根据当前时间置赛季
+  }
+
+  required int32 union_id = 1;
+  required OP op = 2;
+}
+message ForceUpdateUnionBattleRes {
+  required int32 status = 1;
+}
+
+//个人进入下一场战争/进入下一个赛季
+message UnionBattleForwardReq {
+}
+message UnionBattleForwardRes {
+  required int32 status = 1;
+}
+
+//增加演武场代币
+message AddArenaCoinReq {
+  required int32 add_num = 1;
+}
+message AddArenaCoinRes {
+  required int32 status = 1;
+}
+
+
+//修改试炼进度
+message ModifyAnnealProgressReq {
+  optional AnnealMode mode = 1;
+}
+message ModifyAnnealProgressRes {
+  required int32 status = 1;
+}
+//修改扫荡开始时间
+message ModifyAnnealSweepTimeReq {
+  optional int32 back_time = 1;    //向前倒推时间
+}
+message ModifyAnnealSweepTimeRes {
+  required int32 status = 1;	
+}
+
+
+//删除basic数据
+message DeleteBasicInfoReq {
+}
+message DeleteBasicInfoRes {
+  required int32 status = 1;
+}
+
+
+//获取用户基本信息
+message GetUserBasicInfoReq {
+  required uint64 user_id = 1;
+}
+
+message GetUserBasicInfoRes {
+  required int32 status = 1;
+  optional UserBasicInfo user_info = 2;
+}
+
+//修改用户基本信息
+message UpdateUserBasicInfoReq {
+  required uint64 user_id = 1;
+  required UserBasicInfo user_info = 2;
+}
+
+message UpdateUserBasicInfoRes {
+  required int32 status = 1;
+}
+
+//资源重算
+message ReCalculationResourceReq {
+  enum OP {
+    FOOD_OUTPUT = 1;
+    FOOD_CAPACITY = 2;
+    MONEY_OUTPUT = 3;
+    MONEY_CAPACITY = 4;
+  }
+
+  required uint64 user_id = 1;
+  repeated OP op = 2;
+}
+
+message ReCalculationResourceRes {
+  required int32 status = 1;
+  optional float food_output = 2;
+  optional float food_capacity = 3;
+  optional float money_output = 4;
+  optional float money_capacity = 5;
+}
+
+//所有用户资源重算
+message ReCalculationResourceAllReq {
+  enum OP {
+    FOOD_OUTPUT = 1;
+    FOOD_CAPACITY = 2;
+    MONEY_OUTPUT = 3;
+    MONEY_CAPACITY = 4;
+  }
+
+  repeated OP op = 1;
+}
+
+message ReCalculationResourceAllRes {
+  required int32 status = 1;
+}
+
+//删除不活跃用户
+message DeleteInactivityUsersReq {
+  required uint64 user_id = 1;
+  required int32 level = 2;
+  required int32 day = 3;
+}
+
+message DeleteInactivityUsersRes {
+  required int32 status = 1;
+}
+
+//自动盟主转让
+message TryTransferUnionLeaderReq {
+  required int32 union_id = 1;
+}
+
+message TryTransferUnionLeaderRes {
+  enum TRANSFER_RET {
+    OK = 0;
+    NEEDNT = 1;
+  }
+
+  required int32 status = 1;
+  optional TRANSFER_RET ret = 2;
+}
+
+//
+message InternalTransferInfo {
+  enum TYPE {
+    TOP = 0;
+    MATCH = 1;
+    BEHIND = 2;
+    SELF = 3;
+  }
+  optional uint64 user_id = 1;
+  optional int32 rank = 2;
+  optional bool is_robot = 3;
+  optional TYPE transfer_type = 4;
+}
+
+message InternalQueryTransferReq {
+  required uint64 user_id = 1;
+}
+
+message InternalQueryTransferRes {
+  required int32 status = 1;
+  optional InternalTransferInfo self = 2;
+  repeated InternalTransferInfo top20 = 3;
+  repeated InternalTransferInfo match = 4;
+  repeated InternalTransferInfo behind5 = 5;
+}
+
+message InternalExchangeTransferReq {
+  required uint64 user_id = 1;
+  required uint64 target_user_id = 2;
+  required bool exchange = 3;   //是否交换
+}
+
+message InternalExchangeTransferRes {
+  required int32 status = 1;
+  optional int32 self_rank = 2;
+  optional int32 rival_rank = 3;
+}
+message InternalCatReq {
+  required uint64 user_id = 1;
+  required bytes name = 2;
+  required int32 gold = 3;   //本次获得的元宝
+}
+
+message InternalCatRes {
+  required int32 status = 1;
+}
+
+message InternalTransferNoticeReq {
+  required uint64 user_id = 1;
+  required uint64 rival_user_id = 2;
+  required bytes rival_user_name = 3;
+  required int32 rival_level = 4;
+  required int32 rival_icon = 5;
+  required bool win = 6;
+  optional int32 self_rank = 7;
+  optional int32 rival_rank = 8;
+}
+
+message InternalTransferNoticeRes {
+  required int32 status = 1;
+}
+
+//离线更新用户资源
+message UpdateUserInfoOfflineReq {
+  optional uint64 user_id = 1;
+}
+
+message UpdateUserInfoOfflineRes {
+  required int32 status = 1;
+}

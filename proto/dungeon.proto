@@ -1,0 +1,61 @@
+import "resource.proto";
+import "team.proto";
+
+package SanProto;
+
+
+//地下城信息
+message DungeonInfo {
+  enum STATUS {
+    INACTIVE = 1;	//未激活，end_time填下次开启时间
+    ACTIVE = 2;	//激活，end_time填关闭时间
+    LOCKED = 3;	//锁定状态，主公等级没有达到
+  }
+  required STATUS status = 1;
+  optional int32 end_time = 2;	//当前状态结束时间
+}
+
+//请求演武场
+message QueryDungeonInfoReq {
+  required uint64 user_id = 1;
+}
+
+message QueryDungeonInfoRes {
+  required int32 status = 1;
+  optional DungeonInfo dungeon_info = 2;
+}
+
+
+enum EXPAND_DUNGEON_RET{
+	DUNGEON_OK=0;
+	DUNGEON_NOT_OPEN=1;
+	DUNGEON_NO_ENTER_NUM=2;
+	DUNGEON_GOLD_NOT_ENOUGH=3;
+	DUNGEON_NO_DUNGEON=4;
+	DUNGEON_NO_RESET_NUM=5;
+}
+message ExpandDungeonInfo{
+	enum STATUS{
+		INACTIVE = 1;
+		ACTIVE = 2;
+		LOCKED = 3;
+	}
+	required int32 id=1;
+	required STATUS status=2;
+	optional int32 end_time=3;        //当前状态结束时间
+	repeated TeamInfo enemy_teams=4;  //敌方阵容
+	repeated TeamInfo own_teams=5;    //特殊副本己方阵容
+	optional int32 remain_num=6;			//副本剩余的攻击次数
+	optional int32 reset_num=7; 			//已经重置的次
+	repeated int32 display_reward_item_ids = 8; //展示的奖励物品
+}
+message QueryExpandDungeonInfoReq{
+	required int32 id=1;
+	optional int32 battle_level=2;
+}
+message QueryExpandDungeonInfoRes{
+	required int32 status=1;
+	optional EXPAND_DUNGEON_RET ret=2;
+	optional ExpandDungeonInfo dungeon_info=3;
+	optional ResourceInfo resource=4;
+}

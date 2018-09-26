@@ -1,0 +1,52 @@
+import "hero.proto";
+import "resource.proto";
+import "monarch.proto";
+
+package SanProto;
+
+message BuildingInfo {
+  required int32 basic_id = 1;
+  required int32 city_basic_id = 2;
+  required int32 location_index = 3;
+  optional int32 level = 4;
+  optional int32 garrision_num = 5;
+  repeated int32 hero_basic_ids = 6;  //长度为3，表示3个参与位置上的英雄 - 可以为0，为0时表示此位置为空
+  optional bool is_upgrading = 7;
+  optional int32 upgrade_start_time = 8;
+  optional int32 upgrade_consume_time = 9;
+  optional int32 upgrade_passed_time = 10;
+}
+
+//建造、升级、完成、立即完成
+message UpgradeBuildingReq {
+  required uint64 user_id = 1;
+  required BuildingInfo building = 2;
+  repeated HeroInfo heroes = 3;         //相关的英雄：参与建造的英雄，原来驻守在此建筑物中的英雄
+  repeated BuildingInfo buildings = 4;  //相关联的建筑物（会从其中抽调英雄参与到科技研究中）
+  optional MonarchInfo monarch = 5;     //主公信息：在升级完成时，主公也会获得经验
+  optional bool use_gold = 6;           //玩家是否使用元宝立即完成
+}
+message UpgradeBuildingRes {
+  enum RET {
+    OK = 0;
+    NOT_UPGRADING = 1;
+    CANNT_FINISH = 2;
+  }
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+  optional RET ret = 3;
+  optional BuildingInfo building = 4;
+}
+
+//更新驻守武将
+message UpdateGarrisonHeroReq {
+  required uint64 user_id = 1;
+  required BuildingInfo building = 2;
+  repeated HeroInfo heroes = 3;         //相关的英雄：参与驻守的英雄，原来驻守在此建筑物中的英雄
+  repeated BuildingInfo buildings = 4;  //相关联的建筑物（会从其中抽调英雄参与到科技研究中）
+}
+message UpdateGarrisonHeroRes {
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+}
+

@@ -1,0 +1,140 @@
+import "item.proto";
+import "rival.proto";
+
+package SanProto;
+
+//资源信息
+message ExploitationInfo {
+  enum TYPE {
+    MONEY = 1;
+    FOOD = 2;
+    GOLD = 3;
+    MATERIAL = 4;
+	RANDOM_ITEM = 5;
+    ECHANT_MATERIAL = 6;
+    HERO_STAR_SOUL = 7;
+  }
+
+  optional int32 node_id = 1;
+  required TYPE type = 2;
+  optional int32 level = 3;
+
+  //资源采集
+  optional float gather_speed = 4;//产量/小时
+  optional int32 gather_duration = 5;
+
+  //资源开发
+  optional int32 total_time = 6;//开发完成总耗时
+  optional int32 duration = 7;//已经开发的时间
+  optional int32 total_money = 8;
+  optional int32 total_food = 9;
+  optional int32 total_gold = 10;
+  repeated int32 hero_basic_ids = 11;//开发阵容
+
+  //部分资源开采需要标注当前完成情况
+  optional float progress = 12;
+}
+
+//随机事件信息
+message LuckyEventInfo {
+  enum TYPE {
+    TAX = 1;//征税
+    FARM = 2;//屯田
+    MINING = 3;//采矿
+    GOLD = 4;//金矿
+    UPGRADE = 5;//升级
+    DEFEND = 6;//防御
+    QUESTION = 7;//问答
+    VISIT = 8;//探访
+    SPY = 9;//谍报
+    JUNGLE = 10;//野怪（山贼叛军）
+    DUNGEON = 11;//副本
+    ARENA = 12;//演武场
+	  SCOUT = 13;//侦察
+	  SEARCH = 14;//搜索废墟
+    DEEP_MINING = 15;//秘矿
+    HERMIT = 16;//探访隐士
+	  WORLD_BOSS = 17;//世界boss
+    EXPAND_DUNGEON = 18;//扩展副本
+  }
+  required TYPE type = 1;
+  optional int32 arise_duration = 2;//已经出现的时间
+  optional bool is_launched = 3;
+  optional int32 launch_duration = 4;//已经启动的时间
+}
+
+//委任信息
+message AppointInfo {
+  repeated int32 team_indexes = 1;	//委任的部队
+  optional int32 total_time = 2;	//委任总耗时
+  optional int32 passed_time = 3;	//已经委任的耗时
+}
+
+//保护信息
+message ProtectionInfo {
+  enum TYPE {
+    CITY = 1;			//主城
+	RESOURCE_NODE = 2;	//资源点
+  }
+  required TYPE type = 1;
+  optional bool use_gold = 2;
+  optional int32 total_time = 3;	//保护总时间
+  optional int32 passed_time = 4;	//已经保护的时间
+}
+
+//增产信息
+message IncreaseInfo {
+  optional bool use_gold = 1;
+  optional int32 total_time = 2;	//增产总时间
+  optional int32 passed_time = 3;	//已经增产的时间
+  optional float rate = 4;			//增产的倍速
+}
+
+
+//地图上节点信息
+message NodeInfo {
+  enum TYPE {
+    OWN = 1;//我方主城
+    KEY = 2;//关键点
+    DEPENDENCY = 3;//附属点
+  }
+  enum STATUS {
+    ENEMY = 1;//敌人占领
+    DOMINATE = 2;//我方占领
+    INVISIBLE = 3;//不可见
+  }
+
+  required int32 basic_id = 1;
+  required TYPE type = 2;
+  required STATUS status = 3;
+  optional int32 hold_duration = 4;//占领时间
+
+  //敌人信息
+  optional RivalInfo rival = 5;
+
+  //采集信息
+  optional ExploitationInfo exploitation = 6;
+
+  //随机事件
+  optional LuckyEventInfo lucky_event = 9;
+
+  //委任信息
+  optional AppointInfo appoint = 10;
+
+  //保护信息
+  optional ProtectionInfo protect = 11;
+
+  //增产信息
+  optional IncreaseInfo increase = 12;
+
+  //城池信息
+  optional int32 city_level = 13;
+}
+
+//世界地图信息
+message MapInfo {
+  repeated NodeInfo nodes = 1;
+  optional int32 next_war_gap = 2;
+  optional int32 next_luck_gap = 3;
+}
+

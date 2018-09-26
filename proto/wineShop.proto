@@ -1,0 +1,115 @@
+import "item.proto";
+import "resource.proto";
+import "hero.proto";
+import "legendcity.proto";
+
+package SanProto;
+
+message GoodsInfo {
+  enum TYPE {
+    MONEY = 1;
+    GOLD = 2;
+    ACHIEVEMENT = 3;
+    LEGENDCITY = 4;
+    UNION = 5;
+	  ARENA = 6;
+    SOUL_SOUL = 7;
+    SOUL_GOLD = 8;
+  }
+
+  required int32 id = 1;
+  required TYPE type = 2;
+  optional ItemInfo item = 3;
+  optional int32 price = 4;
+  optional bool is_sold = 5;
+  optional int32 discount = 6;
+}
+
+//商店类型
+enum SHOPTYPE {
+  SHOP_NORMAL = 1;
+  SHOP_ACHIEVEMENT = 2;
+  SHOP_LEGENDCITY = 3;
+  SHOP_UNION = 4;
+  SHOP_ARENA = 5;
+  SHOP_SOUL = 6;
+  SHOP_GOLD = 7;
+}
+
+//查询可以购买的物品
+message QueryGoodsReq {
+  required SHOPTYPE type = 1;
+  optional int32 index = 2;
+  optional ItemInfo item = 3;  //商铺刷新代币
+}
+message QueryGoodsRes {
+  required int32 status = 1;
+  repeated GoodsInfo goods = 2;
+  optional int32 refresh_num = 3;       //已刷新次数
+  optional ResourceInfo resource = 4;
+  optional int32 next_refresh_gap = 5;  //下次自动刷新间隔
+  optional bool invalid = 6;
+}
+
+//购买物品
+message BuyGoodsReq {
+  required SHOPTYPE type = 1;
+  required GoodsInfo goods = 2;
+  required ItemInfo item = 3;         //购买物品后的物品信息
+  optional int32 tokens = 4;          //购买花费的代币数量
+  optional int32 tax = 5;             //某些商店的购买行为需要缴税
+  optional int32 index = 6;
+}
+message BuyGoodsRes {
+  required int32 status = 1;
+  optional ResourceInfo resource = 2;
+  optional int32 current_tokens = 3;
+  optional int32 tax = 4;
+  optional bool invalid = 5;
+}
+
+//购买史实城商店的货物
+message BuyLegendCityGoodsReq {
+  required int32 index = 1;
+  required GoodsInfo goods = 2;
+  required ItemInfo item = 3;         //购买物品后的物品信息
+  required int32 tax = 4;
+}
+message BuyLegendCityGoodsRes {
+  required int32 status = 1;
+  optional LEGENDCITY_RET ret = 2;
+  optional int32 tax = 3;
+  optional int32 reputation = 4; //声望
+}
+
+message DrawInfo {
+  required int32 search_num = 1;    //剩余免费抽奖次数
+  required int32 next_left_time = 2;//距离下次免费抽奖的时间（秒）
+  optional int32 gold_search_num_today = 3; //今日元宝已搜索次数
+}
+
+//搜索：抽奖
+message WineShopDrawReq {
+  required uint64 user_id = 1;
+  required bool free = 2;
+  optional ItemInfo item = 3;  //搜索符
+}
+message WineShopDrawRes {
+  required int32 status = 1;
+  repeated ItemInfo items = 2;
+  repeated HeroInfo heroes = 3;
+  optional DrawInfo draw = 4;
+  optional ResourceInfo resource = 5;
+  optional int32 gold_search_num_today = 6; //今日元宝已搜索次数
+}
+
+//查询搜索状态
+message QueryDrawStatusReq {
+  required uint64 user_id = 1;
+}
+message QueryDrawStatusRes {
+  required int32 status = 1;
+  optional DrawInfo gold_draw = 2;
+  optional DrawInfo money_draw = 3;
+}
+

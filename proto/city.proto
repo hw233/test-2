@@ -1,0 +1,16 @@
+package SanProto;
+
+message CityInfo {
+  optional int32 basic_id = 2;
+  optional bytes name = 3;
+}
+
+//更新主城信息
+message UpdateCityReq {
+  required uint64 user_id = 1;
+  required CityInfo city = 2;
+}
+message UpdateCityRes {
+  required int32 status = 1;
+}
+

@@ -1,0 +1,132 @@
+import "team.proto";
+
+package SanProto;
+
+//世界boss的基础信息
+message WorldBossBasicInfo {
+  required int32 id = 1;
+  required int32 boss_id = 2;
+  optional bytes date = 3;
+  optional bytes start_time = 4;
+  optional bytes end_time = 5;
+  optional bytes description = 6;
+  optional int32 total_soldier_num = 7;
+  repeated int32 arrays_id = 8;
+}
+
+//添加世界boss的基础数据
+message AddBasicWorldBossReq {
+  repeated WorldBossBasicInfo bosses = 1;
+}
+message AddBasicWorldBossRes {
+  required int32 status = 1;
+}
+//删除世界boss的基础数据
+message DeleteBasicWorldBossReq {
+  repeated int32 ids = 1;
+}
+message DeleteBasicWorldBossRes {
+  required int32 status = 1;
+}
+//查询世界boss的基础数据
+message QueryBasicWorldBossReq {
+  optional bool is_all = 1;		        //查询所有boss基础数据
+  repeated int32 ids = 2;               //查询指定boss id的基础数据
+}
+message QueryBasicWorldBossRes {
+  required int32 status = 1;
+  repeated WorldBossBasicInfo bosses = 2;
+}
+
+
+
+//世界boss状态
+enum WORLDBOSS_RET {
+  BOSS_OK = 0;
+  BOSS_KILLED = 1;	   //boss已被击杀
+  BOSS_EXPIRED = 2;     //可以战斗的时间区间已过
+  BOSS_OVERTIME = 3;    //单场战斗超时
+}
+
+//世界boss基本结构
+message WorldBossInfo{
+  enum STATUS{
+    INACTIVE = 1;	//未激活
+	  BEFORE_BATTLE = 2;    //今天有世界boss，还没开始
+	  IN_BATTLE = 3;        //今天有世界boss，已经开始
+	  AFTER_BATTLE = 4;     //今天有世界boss，已经结束
+    LOCKED = 5;	//锁定状态，主公等级没有达到
+    DISABLE = 6;	      //不开启世界boss功能
+  }
+  optional STATUS status = 1;    //状态
+  optional int32 end_time = 2;		//当前状态结束时间
+  optional int32 limit_level = 3;		//限制的主公等级
+  optional int32 total_soldier_num = 4;		//总兵力
+  optional int32 current_soldier_num = 5;		//当前兵力
+  optional bytes description = 6;
+  repeated TeamInfo first_teams = 7;
+  repeated TeamInfo second_teams = 8;
+  repeated TeamInfo third_teams = 9;
+  repeated int32 can_attack_teams_index = 10;
+  repeated float teams_coefficient = 11;        //3支队伍分别的战功系数
+  optional bytes kill_user_name = 12;			//击杀boss的玩家名字
+  optional uint64 kill_user_id = 13;			//击杀boss的玩家名字
+}
+
+//请求世界Boss（查询世界boss和同步boss血量共用同一proto，只是请求不一样）
+message QueryWorldBossReq{
+}
+message QueryWorldBossRes{
+  required int32 status = 1;
+  optional WORLDBOSS_RET ret = 2;
+  optional WorldBossInfo boss = 3;
+}
+
+//请求世界boss的公共信息
+message QueryCommonWorldBossReq{
+  optional int32 arise_time = 1;   //请求的世界boss的触发时间
+  optional int32 start_time = 2;   //开打时间
+  optional int32 end_time = 3;     //结束时间
+  optional int32 boss_id = 4;
+  optional int32 total_soldier_num = 5; //总兵量，通知common修改
+  optional uint64 user_id = 6;			//该玩家的user_id
+  optional bytes user_name = 7;         //该玩家的user_name
+  optional int32 kills_addition = 8;    //新增杀敌数
+}
+message QueryCommonWorldBossRes{
+  required int32 status = 1;
+  optional int32 total_soldier_num = 2; //总兵量,会动态调整的
+  optional int32 current_soldier_num = 3;
+  optional bytes kill_user_name = 4;
+  optional uint64 kill_user_id = 5;
+}
+
+//内部请求：修改世界boss的公共信息
+message ModifyWorldBossReq{
+  optional int32 total_soldier_num = 1;
+  optional int32 current_soldier_num = 2;
+  optional bytes kill_user_name = 3;
+  optional uint64 kill_user_id = 4;
+}
+message ModifyWorldBossRes{
+  required int32 status = 1;	
+}
+
+
+//内部请求：清空玩家世界boss的战功
+message ClearWorldBossMeritReq{
+  required uint64 user_id = 1;
+}
+message ClearWorldBossMeritRes{
+  required int32 status = 1;	
+}
+//用户接受清空世界boss战功的请求
+message ReceiveClearWorldBossMeritReq{
+}
+message ReceiveClearWorldBossMeritRes{
+  required int32 status = 1;	
+}
+
+
+
+
