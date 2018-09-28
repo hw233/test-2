@@ -1195,6 +1195,7 @@ class AccountProcessor(object):
         logger.notice("Receive update user info offline succeed"
                 "[user_id=%d][req=%s][res=%s][consume=%d]" %
                 (timer.id, req, res, timer.count_ms()))
+        logger.notice("111")
         DataBase().clear_data(data)
         return response
 
